@@ -58,6 +58,9 @@ namespace SpaceInvaders
         public void onCollisionEnter(PhysicsBody x)
         {
             GameSpaceInvaders g;
+            
+            if (ToBeDestroyed)
+                return;
 
             if (x.Parent.checkTag(destroyTag) == true || x.Parent.checkTag("BunkerBit"))
             {
