@@ -175,7 +175,7 @@ namespace Shard
         {
             int nx, ny, w = 0, h = 0;
 
-            string ffolder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Fonts).Length > 0 ? System.Environment.GetFolderPath(System.Environment.SpecialFolder.Fonts) : "~";
+            string ffolder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Fonts);
 
             IntPtr font = loadFont(ffolder + Path.DirectorySeparatorChar + "calibri.ttf", size);
             Console.WriteLine(ffolder + Path.DirectorySeparatorChar + "calibri.ttf");
