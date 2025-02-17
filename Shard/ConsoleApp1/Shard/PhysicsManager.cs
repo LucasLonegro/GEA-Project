@@ -115,7 +115,7 @@ namespace Shard
             gravityDir = new Vector2(0, 1);
             // 50 FPS            
 
-            TimeInterval = 200;
+            TimeInterval = 20;
             
             if (Bootstrap.checkEnvironmentalVariable("gravity_modifier"))
             {

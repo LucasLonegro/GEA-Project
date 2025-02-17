@@ -287,9 +287,9 @@ namespace Shard
             MinAndMaxY = getMinAndMax(false);
         }
 
-        private void updateVelocities(float timeSinceLastUpdate)
+        private void updateVelocities(float timeModifier)
         {
-            float timeModifier = timeSinceLastUpdate / 20;
+            
             float instantDrag = Drag * timeModifier;
             float instantAngularDrag = angularDrag * timeModifier;
             
@@ -306,7 +306,7 @@ namespace Shard
             }
             else if(instantDrag > 0)
             {
-                velocity = (velocity / velocityMagnitude) * (velocityMagnitude - instantDrag);
+                velocity -= velocity * instantDrag;
             }
             
 
@@ -318,17 +318,17 @@ namespace Shard
             }
             else
             {
-                angularVelocity -= Math.Sign(angularVelocity) * instantAngularDrag;
+                angularVelocity -= instantAngularDrag * angularVelocity;
             }
         }
         
         public void physicsTick(float timeSinceLastUpdate)
         {
+            float timeModifier = timeSinceLastUpdate / 20;
 
-
-            updateVelocities(timeSinceLastUpdate);
-            trans.rotate(angularVelocity);
-			trans.translate(this.velocity);
+            updateVelocities(timeModifier);
+            trans.rotate(angularVelocity * timeModifier);
+			trans.translate(this.velocity * timeModifier);
 
             this.force = Vector2.Zero;
             this.torque = 0;

@@ -26,8 +26,8 @@ namespace GameTest
 
             MyBody.Mass = 1;
             MyBody.MaxForce = 10;
-            MyBody.AngularDrag = 0.01f;
-            MyBody.Drag = 0f;
+            MyBody.AngularDrag = 0.1f;
+            MyBody.Drag = 0.1f;
             MyBody.StopOnCollision = false;
             MyBody.ReflectOnCollision = false;
             MyBody.ImpartForce = false;
