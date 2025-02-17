@@ -14,8 +14,17 @@ namespace GameTest
 
             this.Transform.X = 500.0f;
             this.Transform.Y = 500.0f;
-            this.Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceship.png");
-
+            
+            //Animation test
+            setAnimationEnabled();
+            
+            //Two ways of adding animations: adding all spritepaths seperately
+            // Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceship.png");
+            // Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceship2.png");
+            // Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceship3.png");
+            
+            //Two ways of adding animations: adding the spritepaths as a list:
+            Transform.addSpritePaths([Bootstrap.getAssetManager().getAssetPath("spaceship.png"), Bootstrap.getAssetManager().getAssetPath("spaceship2.png"), Bootstrap.getAssetManager().getAssetPath("spaceship3.png")]);
 
             Bootstrap.getInput().addListener(this);
 

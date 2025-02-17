@@ -1,25 +1,23 @@
 ﻿/*
-*
-*   The transform class handles position, independent of physics and forces (although the physics
-*       system will make use of the rotation and translation functions here).  Essentially this class
-*       is a game object's location (X, Y), rotation and scale.  Usefully it also calculates the 
-*       centre of an object as well as relative directions such as forwards and right.  If you want 
-*       backwards and left, multiply forward or right by -1.
-*       
-*   @author Michael Heron
-*   @version 1.0
-*   
-*/
+ *
+ *   The transform class handles position, independent of physics and forces (although the physics
+ *       system will make use of the rotation and translation functions here).  Essentially this class
+ *       is a game object's location (X, Y), rotation and scale.  Usefully it also calculates the
+ *       centre of an object as well as relative directions such as forwards and right.  If you want
+ *       backwards and left, multiply forward or right by -1.
+ *
+ *   @author Michael Heron
+ *   @version 1.0
+ *
+ */
 
 
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 
-namespace Shard
-{
-
-    class Transform
-    {
+namespace Shard {
+    class Transform {
         private GameObject owner;
         private float x, y;
         private float lx, ly;
@@ -29,9 +27,9 @@ namespace Shard
         private string spritePath;
         private Vector2 forward;
         private Vector2 right, centre;
+        private Animator animator;
 
-        public Vector2 getLastDirection()
-        {
+        public Vector2 getLastDirection() {
             float dx, dy;
             dx = (X - Lx);
             dy = (Y - Ly);
@@ -39,8 +37,7 @@ namespace Shard
             return new Vector2(-dx, -dy);
         }
 
-        public Transform(GameObject ow)
-        {
+        public Transform(GameObject ow) {
             Owner = ow;
             forward = new Vector2();
             right = new Vector2();
@@ -59,23 +56,17 @@ namespace Shard
         }
 
 
-        public void recalculateCentre()
-        {
-
+        public void recalculateCentre() {
             centre.X = (float)(x + ((this.Wid * scalex) / 2));
             centre.Y = (float)(y + ((this.Ht * scaley) / 2));
-
         }
 
-        public void translate(double nx, double ny)
-        {
-            translate ((float)nx, (float)ny);
+        public void translate(double nx, double ny) {
+            translate((float)nx, (float)ny);
         }
 
 
-
-        public void translate(float nx, float ny)
-        {
+        public void translate(float nx, float ny) {
             Lx = X;
             Ly = Y;
 
@@ -86,15 +77,12 @@ namespace Shard
             recalculateCentre();
         }
 
-        public void translate(Vector2 vect)
-        {
+        public void translate(Vector2 vect) {
             translate(vect.X, vect.Y);
         }
 
 
-
-        public void rotate(float dir)
-        {
+        public void rotate(float dir) {
             rotz += (float)dir;
 
             rotz %= 360;
@@ -109,46 +97,106 @@ namespace Shard
 
             right.X = -1 * forward.Y;
             right.Y = forward.X;
-
-
-
-
         }
 
 
-
-        public float X
-        {
+        public float X {
             get => x;
             set => x = value;
         }
-        public float Y
-        {
+
+        public float Y {
             get => y;
             set => y = value;
         }
 
-        public float Rotz
-        {
+        public float Rotz {
             get => rotz;
             set => rotz = value;
         }
 
-
-        public string SpritePath
-        {
-            get => spritePath;
-            set => spritePath = value;
+        public Animator Animator {
+            get => animator;
+            set => animator = value;
         }
-        public ref Vector2 Forward { get => ref forward; }
-        public int Wid { get => wid; set => wid = value; }
-        public int Ht { get => ht; set => ht = value; }
-        public ref Vector2 Right { get => ref right; }
-        internal GameObject Owner { get => owner; set => owner = value; }
-        public ref Vector2 Centre { get => ref centre; }
-        public float Scalex { get => scalex; set => scalex = value; }
-        public float Scaley { get => scaley; set => scaley = value; }
-        public float Lx { get => lx; set => lx = value; }
-        public float Ly { get => ly; set => ly = value; }
+
+        public void addSpritePaths(List<string> paths) {
+            if (animator != null) {
+                animator.SpritePathList = paths;
+                animator.CurrentSpritePath = paths[paths.Count - 1];
+            }
+            spritePath = paths[paths.Count - 1];
+        }
+
+        public string SpritePath {
+            get => spritePath;
+            set {
+                if (animator != null) { //If animated, add every spritepath that is set to the list
+                    animator.addSpritePath(value);
+                    animator.CurrentSpritePath = value;
+                }
+                spritePath = value;
+            }
+        }
+
+        /**
+         * For DisplaySDL to use.
+         * Updates the spritepath to the next sprite if animated, otherwise it does not.
+         */
+        public string getSpritePathUpdated() {
+            if (animator != null) { //If animated, return the next sprite
+                string nextSprite = animator.nextSprite();
+                spritePath = nextSprite;
+                return nextSprite;
+            }
+            return spritePath; //else return same as always
+        }
+
+        public ref Vector2 Forward {
+            get => ref forward;
+        }
+
+        public int Wid {
+            get => wid;
+            set => wid = value;
+        }
+
+        public int Ht {
+            get => ht;
+            set => ht = value;
+        }
+
+        public ref Vector2 Right {
+            get => ref right;
+        }
+
+        internal GameObject Owner {
+            get => owner;
+            set => owner = value;
+        }
+
+        public ref Vector2 Centre {
+            get => ref centre;
+        }
+
+        public float Scalex {
+            get => scalex;
+            set => scalex = value;
+        }
+
+        public float Scaley {
+            get => scaley;
+            set => scaley = value;
+        }
+
+        public float Lx {
+            get => lx;
+            set => lx = value;
+        }
+
+        public float Ly {
+            get => ly;
+            set => ly = value;
+        }
     }
 }
