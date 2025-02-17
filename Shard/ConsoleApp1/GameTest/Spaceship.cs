@@ -27,11 +27,11 @@ namespace GameTest
             MyBody.Mass = 1;
             MyBody.MaxForce = 10;
             MyBody.AngularDrag = 0.1f;
-            MyBody.Drag = 0.1f;
+            MyBody.Drag = 0.05f;
             MyBody.StopOnCollision = false;
             MyBody.ReflectOnCollision = false;
-            MyBody.ImpartForce = false;
-            MyBody.Kinematic = false;
+            MyBody.ImpartForce = true;
+            MyBody.RepelBodies = true;
 
 
             //           MyBody.PassThrough = true;
@@ -127,12 +127,12 @@ namespace GameTest
 
             if (turnLeft)
             {
-                MyBody.addTorque(-0.3f);
+                MyBody.addTorque(-0.6f);
             }
 
             if (turnRight)
             {
-                MyBody.addTorque(0.3f);
+                MyBody.addTorque(0.6f);
             }
 
             if (up)

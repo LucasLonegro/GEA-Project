@@ -56,6 +56,7 @@ namespace Shard
         private bool impartForce;
         private bool passThrough;
         private bool usesGravity;
+        private bool repelBodies;
         private Color debugColor;
         public Color DebugColor { get => debugColor; set => debugColor = value; }
 
@@ -73,6 +74,8 @@ namespace Shard
 
         public float AngularDrag { get => angularDrag; set => angularDrag = value; }
         public float Drag { get => drag; set => drag = value; }
+        public Vector2 Velocity { get => velocity; set => velocity = value; }
+        public float AngularVelocity { get => angularVelocity; set => angularVelocity = value; }
         internal GameObject Parent { get => parent; set => parent = value; }
         internal Transform Trans { get => trans; set => trans = value; }
         public float Mass { get => mass; set => mass = value; }
@@ -86,6 +89,7 @@ namespace Shard
         public bool StopOnCollision { get => stopOnCollision; set => stopOnCollision = value; }
         public bool ReflectOnCollision { get => reflectOnCollision; set => reflectOnCollision = value; }
         public bool ImpartForce { get => this.impartForce; set => this.impartForce = value; }
+        public bool RepelBodies { get => repelBodies; set => repelBodies = value; }
         internal CollisionHandler Colh { get => colh; set => colh = value; }
 
         public void drawMe()
@@ -194,7 +198,7 @@ namespace Shard
 
         public void impartForces(PhysicsBody other, float massProp)
         {
-            other.addForce(force * massProp);
+            other.addForce(velocity * massProp);
 
             recalculateColliders();
 
@@ -245,7 +249,7 @@ namespace Shard
         }
 
         public void reduceForces(float prop) {
-            force *= prop;
+            velocity *= prop;
         }
 
         public void addForce(Vector2 dir, float force) {
