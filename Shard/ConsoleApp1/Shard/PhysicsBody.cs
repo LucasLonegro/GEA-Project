@@ -44,7 +44,9 @@ namespace Shard
         private float angularDrag;
         private float drag;
         private float torque;
+        private float angularVelocity;
         private Vector2 force;
+        private Vector2 velocity;
         private float mass;
         private double timeInterval;
         private float maxForce, maxTorque;
@@ -285,44 +287,51 @@ namespace Shard
             MinAndMaxY = getMinAndMax(false);
         }
 
-        public void physicsTick()
+        private void updateVelocities(float timeSinceLastUpdate)
         {
-            List<Vector2> toRemove;
-            float force;
-            float rot = 0;
-
-
-            toRemove = new List<Vector2>();
-
-            rot = torque;
-
-            if (Math.Abs(torque) < AngularDrag)
+            float timeModifier = timeSinceLastUpdate / 20;
+            float instantDrag = Drag * timeModifier;
+            float instantAngularDrag = angularDrag * timeModifier;
+            
+            if(force.Length() != 0)
             {
-                torque = 0;
+                velocity += force * timeModifier;
+            }
+
+            float velocityMagnitude = velocity.Length();
+            
+            if (velocityMagnitude < instantDrag)
+            {
+                velocity = Vector2.Zero;
+            }
+            else if(instantDrag > 0)
+            {
+                velocity = (velocity / velocityMagnitude) * (velocityMagnitude - instantDrag);
+            }
+            
+
+            if(torque != 0)
+                angularVelocity += torque * timeModifier;
+            if ( Math.Abs(angularVelocity) < instantAngularDrag)
+            {
+                angularVelocity = 0;
             }
             else
             {
-                torque -= Math.Sign(torque) * AngularDrag;
+                angularVelocity -= Math.Sign(angularVelocity) * instantAngularDrag;
             }
+        }
+        
+        public void physicsTick(float timeSinceLastUpdate)
+        {
 
 
+            updateVelocities(timeSinceLastUpdate);
+            trans.rotate(angularVelocity);
+			trans.translate(this.velocity);
 
-            trans.rotate(rot);
-
-            force = this.force.Length();
-
-			trans.translate(this.force);
-
-            if (force < Drag)
-            {
-                stopForces();
-            }
-            else if (force > 0)
-            {
-                this.force = (this.force / force) * (force - Drag);
-            }
-
-
+            this.force = Vector2.Zero;
+            this.torque = 0;
 
         }
 

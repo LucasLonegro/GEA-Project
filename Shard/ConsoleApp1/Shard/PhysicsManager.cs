@@ -115,7 +115,7 @@ namespace Shard
             gravityDir = new Vector2(0, 1);
             // 50 FPS            
 
-            TimeInterval = 20;
+            TimeInterval = 200;
             
             if (Bootstrap.checkEnvironmentalVariable("gravity_modifier"))
             {
@@ -286,7 +286,7 @@ namespace Shard
             }
 
             //            Debug.Log("Tick: " + Bootstrap.TimeElapsed);
-
+            float interval = Bootstrap.getCurrentMillis() - lastUpdate;
             lastUpdate = Bootstrap.getCurrentMillis();
 
 
@@ -299,7 +299,7 @@ namespace Shard
                     body.applyGravity(gravityModifier, gravityDir);
                 }
 
-                body.physicsTick();
+                body.physicsTick(interval);
                 body.recalculateColliders();
 
 
