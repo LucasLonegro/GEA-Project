@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 
 namespace Shard
 {
@@ -18,6 +19,9 @@ namespace Shard
         private List<Invader> livingInvaders;
         private Random rand;
         private GameObject ship;
+        private SoundSDL soundSystem = new SoundSDL();
+        private SoundSDL backGroundSound = new SoundSDL();
+        
         public int Xdir { get => xdir; set => xdir = value; }
         public bool Dead { get => dead; set => dead = value; }
 
@@ -34,14 +38,19 @@ namespace Shard
         public override void update()
         {
             Bootstrap.getDisplay().showText("FPS: " + Bootstrap.getFPS(), 10, 10, 12, 255, 255, 255);
-
+            
             int ymod = 0;
             int deaths = 0;
-
+            
+            soundSystem.playBackgroundMusic("retroBackground.wav");
             if (isRunning() == false)
-            {
+            {   
+                soundSystem.pauseBackgroundMusic();
+                soundSystem.playSound("gameOver.wav");
+                Thread.Sleep(2000);
                 Color col = Color.FromArgb(rand.Next(0, 256), rand.Next(0, 256), rand.Next(0, 256));
                 Bootstrap.getDisplay().showText("GAME OVER!", 300, 300, 128, col);
+                soundSystem.stopBackgroundMusic();
                 return;
             }
             animCounter += (float)Bootstrap.getDeltaTime();
