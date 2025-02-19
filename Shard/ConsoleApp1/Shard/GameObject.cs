@@ -55,6 +55,10 @@ namespace Shard {
             transform.Animator = new Animator();
         }
 
+        public void setAnimationEnabled(int frameDelay) {
+            transform.Animator = new Animator(frameDelay);
+        }
+
         public void setPhysicsEnabled() {
             MyBody = new PhysicsBody(this);
         }
