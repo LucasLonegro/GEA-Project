@@ -340,7 +340,7 @@ namespace Shard
                     toRemove.Add(col);
                 }
                 
-                if (col.A.RepelBodies || col.B.RepelBodies)
+                if (col.A.RepelBodies && col.B.RepelBodies)
                 {
                     Vector2 distanceVector = col.A.Trans.Centre - col.B.Trans.Centre;
                     float distance = distanceVector.Length();

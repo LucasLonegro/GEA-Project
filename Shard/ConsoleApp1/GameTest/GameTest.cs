@@ -9,6 +9,9 @@ namespace Shard
     {
         GameObject background;
         List<GameObject> asteroids;
+        private SoundSDL soundSystem = new SoundSDL();
+        
+        
         public override void update()
         {
             
@@ -49,10 +52,12 @@ namespace Shard
         {
             Bootstrap.getInput().addListener(this);
             createShip();
+            
+            soundSystem.playBackgroundMusic("retroBackground.wav");
 
             asteroids = new List<GameObject>();
 
-
+            soundSystem.playBackgroundMusic("retroBackground.wav");
         }
 
         public void handleInput(InputEvent inp, string eventType)
