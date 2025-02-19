@@ -20,7 +20,6 @@ namespace Shard
         private Random rand;
         private GameObject ship;
         private SoundSDL soundSystem = new SoundSDL();
-        private SoundSDL backGroundSound = new SoundSDL();
         
         public int Xdir { get => xdir; set => xdir = value; }
         public bool Dead { get => dead; set => dead = value; }
