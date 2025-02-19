@@ -128,9 +128,19 @@ namespace Shard {
 
         public override void initialize() {
             fontLibrary = new Dictionary<string, IntPtr>();
-
-            setSize(1280, 864);
-
+            int actualX = 1280;
+            int actualY = 864;
+            // 1280 : 864 == 1 : 0.675
+            
+            int displayX = 1280/3;
+            int displayY = 864/3;
+            
+            
+            float scaleX = (float) 1 / (actualX/displayX);
+            float scaleY = (float) 1 / (actualY/displayY);
+            
+            setSize(displayX, displayY);
+            
             SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING);
             SDL_ttf.TTF_Init();
             _window = SDL.SDL_CreateWindow("Shard Game Engine",
@@ -147,6 +157,8 @@ namespace Shard {
             SDL.SDL_SetRenderDrawBlendMode(_rend, SDL.SDL_BlendMode.SDL_BLENDMODE_BLEND);
 
             SDL.SDL_SetRenderDrawColor(_rend, 0, 0, 0, 255);
+
+            SDL.SDL_RenderSetScale(_rend, scaleX, scaleY);
 
             myTexts = new List<TextDetails>();
         }
