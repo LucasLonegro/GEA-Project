@@ -9,14 +9,13 @@ namespace Shard
     {
         GameObject background;
         List<GameObject> asteroids;
-        private SoundSDL soundSystem = new SoundSDL();
         
         
         public override void update()
         {
             
             Bootstrap.getDisplay().showText("FPS: " + Bootstrap.getSecondFPS() + " / " + Bootstrap.getFPS(), 10, 10, 12, 255, 255, 255);
-
+            
 
         }
 
@@ -33,19 +32,12 @@ namespace Shard
 
             GameObject asteroid;
 
-
-
-    
 //            asteroid.MyBody.Kinematic = true;
      
-
-
             background = new GameObject();
             background.Transform.SpritePath = getAssetManager().getAssetPath ("background2.jpg");
             background.Transform.X = 0;
             background.Transform.Y = 0;
-
-
         }
 
         public override void initialize()
@@ -53,11 +45,9 @@ namespace Shard
             Bootstrap.getInput().addListener(this);
             createShip();
             
-            soundSystem.playBackgroundMusic("retroBackground.wav");
+            Bootstrap.getSound().playBackgroundMusic("retroBackground.wav");
 
             asteroids = new List<GameObject>();
-
-            soundSystem.playBackgroundMusic("retroBackground.wav");
         }
 
         public void handleInput(InputEvent inp, string eventType)

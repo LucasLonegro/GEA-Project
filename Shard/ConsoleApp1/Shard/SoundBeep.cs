@@ -1,191 +1,137 @@
-﻿/*
-*
-*   A very simple implementation of a very simple sound system.
-*   @author Michael Heron
-*   @version 1.0
-*   
-*/
-
-using SDL2;
+﻿using SDL2;
 using System;
-using System.Threading;
+using System.Collections.Generic;
 
 namespace Shard
 {
     public class SoundSDL : Sound
     {
-        private uint musicDevice = 0;
-        private bool isMusicPlaying = false;
-        private bool isMusicMuted = false;
-        private bool isMusicPaused = false;
-        private Thread? musicThread = null;
+        private float backgroundVolume = 1.0f;
+        private float soundVolume = 1.0f;
+        
+        private IntPtr backgroundMusic; // Store music
+        private Dictionary<string, IntPtr> soundEffects; // Store sound effects
 
-        // Play sound effects
-        public override void playSound(string file)
+        public SoundSDL()
         {
-            SDL.SDL_AudioSpec have, want;
-            uint length, dev;
-            IntPtr buffer;
-
-            file = Bootstrap.getAssetManager().getAssetPath(file);
-
-            if (SDL.SDL_LoadWAV(file, out have, out buffer, out length) == IntPtr.Zero)
+            if (SDL_mixer.Mix_OpenAudio(44100, SDL.AUDIO_S16SYS, 2, 2048) < 0)
             {
-                Console.WriteLine($"Failed to load sound file: {file}");
-                return;
+                Console.WriteLine($"SDL_Mixer Initialization Error: {SDL.SDL_GetError()}");
             }
 
-            dev = SDL.SDL_OpenAudioDevice(IntPtr.Zero, 0, ref have, out want, 0);
-            if (dev == 0)
-            {
-                Console.WriteLine($"Failed to open sound device: {SDL.SDL_GetError()}");
-                SDL.SDL_FreeWAV(buffer);
-                return;
-            }
-
-            SDL.SDL_QueueAudio(dev, buffer, length);
-            SDL.SDL_PauseAudioDevice(dev, 0);
-            SDL.SDL_FreeWAV(buffer);
+            soundEffects = new Dictionary<string, IntPtr>();
         }
 
-        // Play background music in a loop
+        // Load and play background music
         public override void playBackgroundMusic(string file)
         {
-            if (isMusicPlaying)
-            {
-                return;
-            }
-
-            SDL.SDL_AudioSpec have, want;
-            uint length;
-            IntPtr buffer;
-
             file = Bootstrap.getAssetManager().getAssetPath(file);
 
-            if (SDL.SDL_LoadWAV(file, out have, out buffer, out length) == IntPtr.Zero)
+            if (backgroundMusic != IntPtr.Zero)
+            {
+                SDL_mixer.Mix_HaltMusic();
+                SDL_mixer.Mix_FreeMusic(backgroundMusic);
+            }
+
+            backgroundMusic = SDL_mixer.Mix_LoadMUS(file);
+            if (backgroundMusic == IntPtr.Zero)
             {
                 Console.WriteLine($"Failed to load background music: {file}");
                 return;
             }
 
-            musicDevice = SDL.SDL_OpenAudioDevice(IntPtr.Zero, 0, ref have, out want, 0);
-            if (musicDevice == 0)
-            {
-                Console.WriteLine($"Failed to open music device: {SDL.SDL_GetError()}");
-                SDL.SDL_FreeWAV(buffer);
-                return;
-            }
+            SDL_mixer.Mix_PlayMusic(backgroundMusic, -1); // Play in loop (-1 means infinite)
+            SDL_mixer.Mix_VolumeMusic((int)(SDL_mixer.MIX_MAX_VOLUME * backgroundVolume));
 
-            isMusicPlaying = true;
-            musicThread = new Thread(() =>
-            {
-                while (isMusicPlaying)
-                {
-                    SDL.SDL_ClearQueuedAudio(musicDevice);
-                    SDL.SDL_QueueAudio(musicDevice, buffer, length);
-                    if (!isMusicMuted) SDL.SDL_PauseAudioDevice(musicDevice, 0);
-
-                    double durationMs = (length / (double)(have.freq * have.channels * (SDL.SDL_AUDIO_BITSIZE(have.format) / 8))) * 1000;
-                    Thread.Sleep((int)durationMs);
-                }
-
-                SDL.SDL_CloseAudioDevice(musicDevice);
-                SDL.SDL_FreeWAV(buffer);
-            });
-
-            musicThread.IsBackground = true;
-            musicThread.Start();
         }
-        
-        public override void stopBackgroundMusic()//TODO: Not ready yet
+
+        // Play a sound effect
+        public override void playSound(string file)
         {
-            if (!isMusicPlaying)
+            file = Bootstrap.getAssetManager().getAssetPath(file);
+
+            if (!soundEffects.ContainsKey(file))
             {
-                Console.WriteLine("No background music is playing.");
-                return;
+                IntPtr sound = SDL_mixer.Mix_LoadWAV(file);
+                if (sound == IntPtr.Zero)
+                {
+                    Console.WriteLine($"Failed to load sound: {file}");
+                    return;
+                }
+                soundEffects[file] = sound;
             }
 
-            isMusicPlaying = false;
-            musicThread?.Join();
-            SDL.SDL_ClearQueuedAudio(musicDevice);
-            SDL.SDL_CloseAudioDevice(musicDevice);
-            musicDevice = 0;
-            isMusicMuted = false;
-
-            Console.WriteLine("Background music stopped.");
+            SDL_mixer.Mix_PlayChannel(-1, soundEffects[file], 0); // -1 = Play on any free channel
+            SDL_mixer.Mix_Volume(-1, (int)(SDL_mixer.MIX_MAX_VOLUME * soundVolume));
         }
         
-        // Pause the background music
+        // Stop background music
+        public override void stopBackgroundMusic()
+        {
+            SDL_mixer.Mix_HaltMusic();
+        }
+        
+        // Pause background music
         public override void pauseBackgroundMusic()
         {
-            if (!isMusicPlaying)
+            if (SDL_mixer.Mix_PlayingMusic() == 1)
             {
-                Console.WriteLine("Music is not playing.");
-                return;
+                SDL_mixer.Mix_PauseMusic();
+                Console.WriteLine("Background music paused.");
             }
-
-            if (isMusicPaused)
-            {
-                Console.WriteLine("Music is already paused.");
-                return;
-            }
-
-            SDL.SDL_PauseAudioDevice(musicDevice, 1);
-            isMusicPaused = true;
         }
-
-        // Unpause the background music
+ 
+        // Resume background music
         public override void resumeBackgroundMusic()
         {
-            if (!isMusicPlaying)
+            if (SDL_mixer.Mix_PausedMusic() == 1)
             {
-                Console.WriteLine("No music to resume.");
-                return;
+                SDL_mixer.Mix_ResumeMusic();
+                Console.WriteLine("Background music resumed.");
             }
-
-            if (!isMusicPaused)
-            {
-                Console.WriteLine("Music is already playing.");
-                return;
-            }
-
-            SDL.SDL_PauseAudioDevice(musicDevice, 0);
-            isMusicPaused = false;
         }
-        
-        // Mute the background music
+
+        // Mute background music
         public override void muteBackgroundMusic()
         {
-            if (isMusicPlaying && !isMusicMuted)
-            {
-                SDL.SDL_PauseAudioDevice(musicDevice, 1);
-                isMusicMuted = true;
-                Console.WriteLine("Mute");
-            }
-            else
-            {
-                Console.WriteLine("Background music is not playing or already muted.");
-            }
+            SDL_mixer.Mix_VolumeMusic(0);
         }
 
-        // Unmute the background music
+        // Unmute background music
         public override void unmuteBackgroundMusic()
         {
-            if (isMusicPlaying && isMusicMuted)
-            {
-                SDL.SDL_PauseAudioDevice(musicDevice, 0);
-                isMusicMuted = false;
-                Console.WriteLine("Unmute");
-            }
-            else
-            {
-                Console.WriteLine("Background music is not playing or already unmute.");
-            }
+            SDL_mixer.Mix_VolumeMusic((int)(SDL_mixer.MIX_MAX_VOLUME * backgroundVolume));
+        }
+
+        // Set background music volume (real-time)
+        public override void setBackgroundVolume(float volume)
+        {
+            backgroundVolume = Math.Clamp(volume, 0.0f, 1.0f);
+            SDL_mixer.Mix_VolumeMusic((int)(SDL_mixer.MIX_MAX_VOLUME * backgroundVolume));
+
+            Console.WriteLine($"Background music volume set to {backgroundVolume * 100}%.");
         }
         
-        //TODO: public override void setBackgroundVolume()
-        //TODO: public override void setSoundVolume()
-        //TODO: public override int getBackgroundVolume()
-        //TODO: public override int getSoundVolume()
+        // Get current background music volume
+        public override int getBackgroundVolume()
+        {
+            return (int)((float)SDL_mixer.Mix_VolumeMusic(-1) / SDL_mixer.MIX_MAX_VOLUME * 100);
+        }
+
+        // Set sound effect volume
+        public override void setSoundVolume(float volume)
+        {
+            soundVolume = Math.Clamp(volume, 0.0f, 1.0f);
+            SDL_mixer.Mix_Volume(-1, (int)(SDL_mixer.MIX_MAX_VOLUME * soundVolume));
+
+            Console.WriteLine($"Sound effects volume set to {soundVolume * 100}%.");
+        }
+        
+        // Get current sound volume
+        public override int getSoundVolume()
+        {
+            return (int)((float)SDL_mixer.Mix_Volume(-1, -1) / SDL_mixer.MIX_MAX_VOLUME * 100);
+        }
+
     }
 }
