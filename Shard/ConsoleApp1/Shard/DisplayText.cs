@@ -74,6 +74,8 @@ namespace Shard {
         int _access;
         private List<TextDetails> myTexts;
         private Dictionary<string, IntPtr> fontLibrary;
+        private const int width = 1280;
+        private const int height = 864;
 
         public override void clearDisplay() {
             foreach (TextDetails td in myTexts) {
@@ -128,18 +130,8 @@ namespace Shard {
 
         public override void initialize() {
             fontLibrary = new Dictionary<string, IntPtr>();
-            int actualX = 1280;
-            int actualY = 864;
-            // 1280 : 864 == 1 : 0.675
             
-            int displayX = 1280/3;
-            int displayY = 864/3;
-            
-            
-            float scaleX = (float) 1 / (actualX/displayX);
-            float scaleY = (float) 1 / (actualY/displayY);
-            
-            setSize(displayX, displayY);
+            setSize(width, height);
             
             SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING);
             SDL_ttf.TTF_Init();
@@ -158,11 +150,39 @@ namespace Shard {
 
             SDL.SDL_SetRenderDrawColor(_rend, 0, 0, 0, 255);
 
-            SDL.SDL_RenderSetScale(_rend, scaleX, scaleY);
-
             myTexts = new List<TextDetails>();
         }
 
+        //TODO: code repetition?
+        public override void scaleDown() {
+            float currentWidth = getWidth();
+
+            float currentScale = currentWidth / width;
+            float nextScale = (float)(currentScale - 0.1);
+            
+            int nextWidth = (int)(nextScale * width + 0.5);
+            int nextHeight = (int)(nextScale * height + 0.5);
+            
+            setSize(nextWidth, nextHeight);
+            SDL.SDL_SetWindowSize(_window, nextWidth, nextHeight);
+            SDL.SDL_SetWindowPosition(_window, SDL.SDL_WINDOWPOS_CENTERED, SDL.SDL_WINDOWPOS_CENTERED);
+            SDL.SDL_RenderSetScale(_rend, nextScale, nextScale);
+        }
+        
+        public override void scaleUp() {
+            float currentWidth = getWidth();
+
+            float currentScale = currentWidth / width;
+            float nextScale = (float)(currentScale + 0.1);
+            
+            int nextWidth = (int)(nextScale * width + 0.5);
+            int nextHeight = (int)(nextScale * height + 0.5);
+            
+            setSize(nextWidth, nextHeight);
+            SDL.SDL_SetWindowSize(_window, nextWidth, nextHeight);
+            SDL.SDL_SetWindowPosition(_window, SDL.SDL_WINDOWPOS_CENTERED, SDL.SDL_WINDOWPOS_CENTERED);
+            SDL.SDL_RenderSetScale(_rend, nextScale, nextScale);
+        }
 
         public override void showText(string text, double x, double y, int size, int r, int g,
             int b) {
