@@ -69,15 +69,16 @@ namespace Shard {
                 asteroids.Clear();
             }
             
+            //SCALING THE WINDOW
             if (eventType == "KeyUp") {
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_1) {
-                    Bootstrap.getDisplay().scaleDown();
+                    Bootstrap.getDisplay().scaleWindow(Scaling.Down);
                 }
             }
             
             if (eventType == "KeyUp") {
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_2) {
-                    Bootstrap.getDisplay().scaleUp();
+                    Bootstrap.getDisplay().scaleWindow(Scaling.Up);
                 }
             }
         }

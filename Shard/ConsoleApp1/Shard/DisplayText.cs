@@ -153,35 +153,37 @@ namespace Shard {
             myTexts = new List<TextDetails>();
         }
 
-        //TODO: code repetition?
-        public override void scaleDown() {
+        /**
+         * Method to rescale the window
+         * Dir can be Up or Down
+         * For up the scale will be increased by +0.1
+         * For down the scale will be decreased by -0.1
+         */
+        public override void scaleWindow(Scaling dir) {
             float currentWidth = getWidth();
-
             float currentScale = currentWidth / width;
-            float nextScale = (float)(currentScale - 0.1);
+
+            //Set the next scale according to the param
+            float nextScale = currentScale;
+            if (dir == Scaling.Down) {
+                nextScale = (float)(currentScale - 0.1);
+            } else if (dir == Scaling.Up) { 
+                nextScale = (float)(currentScale + 0.1);
+            }
             
+            //Calc next width and height
+            // +0.5 for rounding
             int nextWidth = (int)(nextScale * width + 0.5);
             int nextHeight = (int)(nextScale * height + 0.5);
             
+            //Set size in display class to store
             setSize(nextWidth, nextHeight);
-            SDL.SDL_SetWindowSize(_window, nextWidth, nextHeight);
-            SDL.SDL_SetWindowPosition(_window, SDL.SDL_WINDOWPOS_CENTERED, SDL.SDL_WINDOWPOS_CENTERED);
-            SDL.SDL_RenderSetLogicalSize(_rend, nextWidth, nextHeight);
-            SDL.SDL_RenderSetScale(_rend, nextScale, nextScale);
-        }
-        
-        public override void scaleUp() {
-            float currentWidth = getWidth();
-
-            float currentScale = currentWidth / width;
-            float nextScale = (float)(currentScale + 0.1);
             
-            int nextWidth = (int)(nextScale * width + 0.5);
-            int nextHeight = (int)(nextScale * height + 0.5);
-            
-            setSize(nextWidth, nextHeight);
+            //Actually resize window using SDL
             SDL.SDL_SetWindowSize(_window, nextWidth, nextHeight);
+            //Position window
             SDL.SDL_SetWindowPosition(_window, SDL.SDL_WINDOWPOS_CENTERED, SDL.SDL_WINDOWPOS_CENTERED);
+            //Resize renderer
             SDL.SDL_RenderSetLogicalSize(_rend, nextWidth, nextHeight);
             SDL.SDL_RenderSetScale(_rend, nextScale, nextScale);
         }
