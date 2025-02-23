@@ -166,6 +166,7 @@ namespace Shard {
             setSize(nextWidth, nextHeight);
             SDL.SDL_SetWindowSize(_window, nextWidth, nextHeight);
             SDL.SDL_SetWindowPosition(_window, SDL.SDL_WINDOWPOS_CENTERED, SDL.SDL_WINDOWPOS_CENTERED);
+            SDL.SDL_RenderSetLogicalSize(_rend, nextWidth, nextHeight);
             SDL.SDL_RenderSetScale(_rend, nextScale, nextScale);
         }
         
@@ -181,6 +182,7 @@ namespace Shard {
             setSize(nextWidth, nextHeight);
             SDL.SDL_SetWindowSize(_window, nextWidth, nextHeight);
             SDL.SDL_SetWindowPosition(_window, SDL.SDL_WINDOWPOS_CENTERED, SDL.SDL_WINDOWPOS_CENTERED);
+            SDL.SDL_RenderSetLogicalSize(_rend, nextWidth, nextHeight);
             SDL.SDL_RenderSetScale(_rend, nextScale, nextScale);
         }
 
