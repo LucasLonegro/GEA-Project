@@ -4,11 +4,21 @@ namespace Shard;
 
 public class Animator {
 
+    private int frameDelay;
+    private int frameCounter;
     private List<string> spritePathList;
     private string currentSpritePath;
 
     public Animator() {
         spritePathList = new List<string>();
+        frameDelay = 0;
+        frameCounter = 0;
+    }
+
+    public Animator(int frameDelay) {
+        spritePathList = new List<string>();
+        this.frameDelay = frameDelay;
+        frameCounter = 0;
     }
 
     public string CurrentSpritePath {
@@ -19,7 +29,6 @@ public class Animator {
     public List<string> SpritePathList {
         get => spritePathList;
         set => spritePathList = value;
-        //No setter bc we only want 1 list during the duration of the run!
     }
 
     public void addSpritePath(string spritePath) {
@@ -39,6 +48,19 @@ public class Animator {
     }
 
     public string nextSprite() {
+
+        if (frameDelay != 0) { //If there is a frame delay
+            if (frameCounter < frameDelay) { //New frame is not needed yet, return current frame
+                frameCounter++;
+                return currentSpritePath;
+            }
+
+            if (frameCounter == frameDelay) { //New frame will be needed, reset counter
+                frameCounter = 0;
+            }
+        }
+        
+        //Get next frame
         int index = spritePathList.IndexOf(currentSpritePath);
         int nextIndex = (index + 1) % (spritePathList.Count); 
         // Debug.Log("[LISA] current:" + spritePathList[index]);
