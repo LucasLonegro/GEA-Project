@@ -41,7 +41,7 @@ namespace GameTest
 
 
             //            MyBody.addCircleCollider(32, 32, 30);
-            MyBody.addRectCollider();
+            MyBody.addCircleCollider();
             Bootstrap.getInput().addListener(this);
 
             addTag("Asteroid");
