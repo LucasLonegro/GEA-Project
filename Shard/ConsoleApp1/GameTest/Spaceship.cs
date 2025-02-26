@@ -2,29 +2,29 @@
 using Shard;
 using System.Drawing;
 
-namespace GameTest
-{
-    class Spaceship : GameObject, InputListener, CollisionHandler
-    {
+namespace GameTest {
+    class Spaceship : GameObject, InputListener, CollisionHandler {
         bool up, down, turnLeft, turnRight;
 
 
-        public override void initialize()
-        {
-
+        public override void initialize() {
             this.Transform.X = 500.0f;
             this.Transform.Y = 500.0f;
-            
+
             //Animation test
             setAnimationEnabled();
-            
+
             //Two ways of adding animations: adding all spritepaths seperately
             // Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceship.png");
             // Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceship2.png");
             // Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceship3.png");
-            
+
             //Two ways of adding animations: adding the spritepaths as a list:
-            Transform.addSpritePaths([Bootstrap.getAssetManager().getAssetPath("spaceship.png"), Bootstrap.getAssetManager().getAssetPath("spaceship2.png"), Bootstrap.getAssetManager().getAssetPath("spaceship3.png")]);
+            Transform.addSpritePaths([
+                Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
+                Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
+                Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
+            ]);
 
             Bootstrap.getInput().addListener(this);
 
@@ -52,141 +52,101 @@ namespace GameTest
             MyBody.addRectCollider();
 
             addTag("Spaceship");
-
-
         }
 
-        public void fireBullet()
-        {
+        public void fireBullet() {
             Bullet b = new Bullet();
 
             b.setupBullet(this, this.Transform.Centre.X, this.Transform.Centre.Y);
 
             b.Transform.rotate(this.Transform.Rotz);
 
-            Bootstrap.getSound().playSound ("fire.wav");
+            Bootstrap.getSound().playSound("fire.wav");
         }
 
-        public void handleInput(InputEvent inp, string eventType)
-        {
-
-
-
-            if (eventType == "KeyDown")
-            {
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W)
-                {
+        public void handleInput(InputEvent inp, string eventType) {
+            if (eventType == "KeyDown") {
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) {
                     up = true;
                 }
 
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S)
-                {
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) {
                     down = true;
                 }
 
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D)
-                {
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D) {
                     turnRight = true;
                 }
 
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_A)
-                {
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_A) {
                     turnLeft = true;
                 }
-
             }
-            else if (eventType == "KeyUp")
-            {
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W)
-                {
+            else if (eventType == "KeyUp") {
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) {
                     up = false;
                 }
 
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S)
-                {
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) {
                     down = false;
                 }
 
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D)
-                {
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D) {
                     turnRight = false;
                 }
 
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_A)
-                {
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_A) {
                     turnLeft = false;
                 }
-
-
             }
 
 
-
-            if (eventType == "KeyUp")
-            {
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_SPACE)
-                {
+            if (eventType == "KeyUp") {
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_SPACE) {
                     fireBullet();
                 }
             }
         }
 
-        public override void physicsUpdate()
-        {
-
-            if (turnLeft)
-            {
+        public override void physicsUpdate() {
+            if (turnLeft) {
                 MyBody.addTorque(-0.6f);
             }
 
-            if (turnRight)
-            {
+            if (turnRight) {
                 MyBody.addTorque(0.6f);
             }
 
-            if (up)
-            {
-
+            if (up) {
                 MyBody.addForce(this.Transform.Forward, 0.5f);
-
             }
 
-            if (down)
-            {
+            if (down) {
                 MyBody.addForce(this.Transform.Forward, -0.2f);
             }
-
-
         }
 
-        public override void update()
-        {
+        public override void update() {
             Bootstrap.getDisplay().addToDraw(this);
         }
 
-        public void onCollisionEnter(PhysicsBody x)
-        {
-            if (x.Parent.checkTag("Bullet") == false)
-            {
+        public void onCollisionEnter(PhysicsBody x) {
+            if (x.Parent.checkTag("Bullet") == false) {
                 MyBody.DebugColor = Color.Red;
             }
         }
 
-        public void onCollisionExit(PhysicsBody x)
-        {
-
+        public void onCollisionExit(PhysicsBody x) {
             MyBody.DebugColor = Color.Green;
         }
 
-        public void onCollisionStay(PhysicsBody x)
-        {
+        public void onCollisionStay(PhysicsBody x) {
             MyBody.DebugColor = Color.Blue;
         }
 
-        public override string ToString()
-        {
-            return "Spaceship: [" + Transform.X + ", " + Transform.Y + ", " + Transform.Wid + ", " + Transform.Ht + "]";
+        public override string ToString() {
+            return "Spaceship: [" + Transform.X + ", " + Transform.Y + ", " + Transform.Wid + ", " +
+                   Transform.Ht + "]";
         }
-
     }
 }
