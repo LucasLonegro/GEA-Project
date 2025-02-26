@@ -8,20 +8,15 @@ namespace Shard {
     class GameTest : Game, InputListener {
         GameObject background;
         List<GameObject> asteroids;
-        
-        
+
+
         public override void update()
         {
-            
-            Bootstrap.getDisplay().showText("FPS: " + Bootstrap.getSecondFPS() + " / " + Bootstrap.getFPS(), 10, 10, 12, 255, 255, 255);
-            
 
-        public override void update() {
-            Bootstrap.getDisplay()
-                .showText("FPS: " + Bootstrap.getSecondFPS() + " / " + Bootstrap.getFPS(), 10, 10,
-                    12, 255, 255, 255);
+            Bootstrap.getDisplay().showText("FPS: " + Bootstrap.getSecondFPS() + " / " + Bootstrap.getFPS(), 10, 10, 12,
+                255, 255, 255);
         }
-
+        
         public override int getTargetFrameRate() {
             return 100;
         }
