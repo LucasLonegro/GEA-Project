@@ -6,9 +6,16 @@ public class Animator {
 
     private List<string> spritePathList;
     private string currentSpritePath;
+    private bool enabled;
 
     public Animator() {
         spritePathList = new List<string>();
+        enabled = false;
+    }
+
+    public bool Enabled {
+        get => enabled;
+        set => enabled = value;
     }
 
     public string CurrentSpritePath {
@@ -19,9 +26,9 @@ public class Animator {
     public List<string> SpritePathList {
         get => spritePathList;
         set => spritePathList = value;
-        //No setter bc we only want 1 list during the duration of the run!
     }
 
+    //I don't think we'll need this
     public void addSpritePath(string spritePath) {
         if (!spritePathList.Contains(spritePath)) {
             spritePathList.Add(spritePath);
@@ -34,7 +41,7 @@ public class Animator {
             spritePathList.Remove(spritePath);
         }
         else {
-            Debug.Log("[LISA] Tried to remove spritePath " + spritePath + " but it doesn't exist.");
+            Debug.Log("Tried to remove spritePath " + spritePath + " but it doesn't exist.");
         }
     }
 

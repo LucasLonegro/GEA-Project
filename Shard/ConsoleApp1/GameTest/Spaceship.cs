@@ -8,21 +8,23 @@ namespace GameTest {
 
 
         public override void initialize() {
-            this.Transform.X = 500.0f;
-            this.Transform.Y = 500.0f;
+            Transform.X = 500.0f;
+            Transform.Y = 500.0f;
+            
+            //Set default sprite
+            Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceship.png");
 
             //Animation test
             setAnimationEnabled();
-
-            //Two ways of adding animations: adding all spritepaths seperately
-            // Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceship.png");
-            // Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceship2.png");
-            // Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceship3.png");
-
-            //Two ways of adding animations: adding the spritepaths as a list:
-            Transform.addSpritePaths([
+            Transform.addAnimation("go", [
                 Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
                 Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
+                Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
+            ]);
+            
+            Transform.addAnimation("nogo", [
+                // Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
+                // Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
                 Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
             ]);
 
@@ -68,10 +70,12 @@ namespace GameTest {
             if (eventType == "KeyDown") {
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) {
                     up = true;
+                    Transform.enableAnimation("go");
                 }
 
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) {
                     down = true;
+                    Transform.enableAnimation("nogo");
                 }
 
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D) {
@@ -85,10 +89,12 @@ namespace GameTest {
             else if (eventType == "KeyUp") {
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) {
                     up = false;
+                    Transform.disableAnimation();
                 }
 
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) {
                     down = false;
+                    Transform.disableAnimation();
                 }
 
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D) {
