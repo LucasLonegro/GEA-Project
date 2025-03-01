@@ -8,8 +8,6 @@ namespace Shard {
     class GameTest : Game, InputListener {
         GameObject background;
         List<GameObject> asteroids;
-        private SoundSDL soundSystem = new SoundSDL();
-
 
         public override void update() {
             Bootstrap.getDisplay()
@@ -30,8 +28,7 @@ namespace Shard {
 
 
 //            asteroid.MyBody.Kinematic = true;
-
-
+          
             background = new GameObject();
             background.Transform.SpritePath = getAssetManager().getAssetPath("background2.jpg");
             background.Transform.X = 0;
@@ -42,11 +39,10 @@ namespace Shard {
             Bootstrap.getInput().addListener(this);
             createShip();
 
-            soundSystem.playBackgroundMusic("retroBackground.wav");
+            
+            Bootstrap.getSound().playBackgroundMusic("retroBackground.wav");
 
             asteroids = new List<GameObject>();
-
-            soundSystem.playBackgroundMusic("retroBackground.wav");
         }
 
         public void handleInput(InputEvent inp, string eventType) {
