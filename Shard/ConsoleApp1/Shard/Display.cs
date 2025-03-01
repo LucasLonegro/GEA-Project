@@ -85,7 +85,17 @@ namespace Shard
         public abstract void clearDisplay();
         public abstract void display();
 
+        public abstract void scaleWindow(Scaling dir);
+
         public abstract void showText(string text, double x, double y, int size, int r, int g, int b);
         public abstract void showText(char[,] text, double x, double y, int size, int r, int g, int b);
+    }
+
+    /**
+     * Enum to handle window scaling
+     */
+    enum Scaling {
+        Up,
+        Down
     }
 }
