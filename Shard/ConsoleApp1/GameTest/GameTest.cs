@@ -5,7 +5,7 @@ using System.Drawing;
 using SDL2;
 
 namespace Shard {
-    class GameTest : Game, InputListener {
+    class GameTest : Game , InputListener {
         GameObject background;
         List<GameObject> asteroids;
 
@@ -19,10 +19,20 @@ namespace Shard {
             return 100;
         }
 
-        public void createShip() {
-            GameObject ship = new Spaceship();
-            Random rand = new Random();
-            int offsetx = 0, offsety = 0;
+        public void createShips() {
+            // GameObject ship = new Spaceship();
+            // Random rand = new Random();
+            // int offsetx = 0, offsety = 0;
+            //
+            // 🎮 Player 1 Ship (Controlled as before)
+            GameObject playerOne = new Spaceship(true);
+            playerOne.Transform.X = 200;
+            playerOne.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
+
+            // 🎮 Player 2 Ship (Controlled with Arrow Keys)
+            GameObject playerTwo = new Spaceship(false);
+            playerTwo.Transform.X = Bootstrap.getDisplay().getWidth() - 200;;  // Different starting position
+            playerTwo.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
 
             GameObject asteroid;
 
@@ -37,7 +47,7 @@ namespace Shard {
 
         public override void initialize() {
             Bootstrap.getInput().addListener(this);
-            createShip();
+            createShips();
 
             
             Bootstrap.getSound().playBackgroundMusic("retroBackground.wav");
@@ -48,22 +58,23 @@ namespace Shard {
         public void handleInput(InputEvent inp, string eventType) {
             if (eventType == "MouseDown") {
                 Console.WriteLine("Pressing button " + inp.Button);
-            }
-
-            if (eventType == "MouseDown" && inp.Button == 1) {
-                Asteroid asteroid = new Asteroid();
-                asteroid.Transform.X = inp.X;
-                asteroid.Transform.Y = inp.Y;
-                asteroids.Add(asteroid);
-            }
-
-            if (eventType == "MouseDown" && inp.Button == 3) {
-                foreach (GameObject ast in asteroids) {
-                    ast.ToBeDestroyed = true;
+                
+                if (inp.Button == 1) {
+                    Asteroid asteroid = new Asteroid();
+                    asteroid.Transform.X = inp.X;
+                    asteroid.Transform.Y = inp.Y;
+                    asteroids.Add(asteroid);
                 }
 
-                asteroids.Clear();
+                if (inp.Button == 3) {
+                    foreach (GameObject ast in asteroids) {
+                        ast.ToBeDestroyed = true;
+                    }
+
+                    asteroids.Clear();
+                }
             }
+
             
             //SCALING THE WINDOW
             if (eventType == "KeyUp") {
