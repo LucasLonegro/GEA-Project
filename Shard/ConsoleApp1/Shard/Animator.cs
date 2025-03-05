@@ -7,15 +7,21 @@ public class Animator {
     private List<string> spritePathList;
     private string currentSpritePath;
     private bool enabled;
+    private int frameDelay;
+    private int ctr;
 
     public Animator() {
         spritePathList = new List<string>();
-        enabled = false;
     }
 
     public bool Enabled {
         get => enabled;
         set => enabled = value;
+    }
+
+    public int FrameDelay {
+        get => frameDelay;
+        set => frameDelay = value;
     }
 
     public string CurrentSpritePath {
@@ -46,13 +52,24 @@ public class Animator {
     }
 
     public string nextSprite() {
+        
         int index = spritePathList.IndexOf(currentSpritePath);
-        int nextIndex = (index + 1) % (spritePathList.Count); 
-        // Debug.Log("[LISA] current:" + spritePathList[index]);
-        // Debug.Log("[LISA] next:" + spritePathList[nextIndex]);
-                
-        currentSpritePath = spritePathList[nextIndex];
-        return spritePathList[nextIndex];
+        int nextIndex = (index + 1) % (spritePathList.Count);
+        string nextSprite = spritePathList[nextIndex];
+
+        if (ctr >= frameDelay) {
+            ctr = 0;
+            currentSpritePath = nextSprite;
+            return nextSprite;
+        }
+        else {
+            ctr++;
+            return currentSpritePath;
+        }
+        
+
+
+        
     }
 
 }

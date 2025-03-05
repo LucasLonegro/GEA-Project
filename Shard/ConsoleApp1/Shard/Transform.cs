@@ -127,8 +127,28 @@ namespace Shard {
             if (animatorDict != null) {
                 Animator anim = new Animator();
                 anim.SpritePathList = spritePathList;
+                anim.CurrentSpritePath = spritePathList[0];
                 animatorDict.Add(name, anim);
-                Debug.Log("[LISA] animation added: " + name);
+            }
+        }
+        
+        /**
+         * Overloaded method. Can add the framedelay when creating animation
+         */
+        public void addAnimation(String name, List<string> spritePathList, int frameDelay) {
+            if (animatorDict != null) {
+                Animator anim = new Animator();
+                anim.SpritePathList = spritePathList;
+                anim.CurrentSpritePath = spritePathList[0];
+                anim.FrameDelay = frameDelay;
+                animatorDict.Add(name, anim);
+            }
+        }
+
+        public void setAnimationFrameDelay(String name, int frameDelay) {
+            if (animatorDict != null) {
+                Animator anim = animatorDict[name]; //TODO: ISSUE HEREEEE~!!!!!
+                anim.FrameDelay = frameDelay;
             }
         }
 
@@ -147,7 +167,7 @@ namespace Shard {
                     elem.Value.Enabled = false; //Set all to disabled
                     
                     //EXCEPT the animation we want to enable
-                    if (elem.Key == name) { 
+                    if (elem.Key == name) { //TODO: can be cleaner?
                         elem.Value.Enabled = true;
                     }
                 }

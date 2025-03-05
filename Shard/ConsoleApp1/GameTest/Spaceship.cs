@@ -20,7 +20,8 @@ namespace GameTest {
                 Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
                 Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
                 Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
-            ]);
+            ], 30);
+            
             
             Transform.addAnimation("nogo", [
                 // Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
@@ -70,7 +71,7 @@ namespace GameTest {
             if (eventType == "KeyDown") {
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) {
                     up = true;
-                    Transform.enableAnimation("go");
+                    Transform.enableAnimation("go"); 
                 }
 
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) {
