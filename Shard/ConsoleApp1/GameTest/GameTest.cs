@@ -2,7 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
+using System.Runtime.InteropServices;
 using SDL2;
+using Steamworks;
 
 namespace Shard {
     class GameTest : Game, InputListener {
@@ -45,6 +48,23 @@ namespace Shard {
             Bootstrap.getSound().playBackgroundMusic("retroBackground.wav");
 
             asteroids = new List<GameObject>();
+            
+            Console.WriteLine("Steam is running " + SteamAPI.IsSteamRunning());
+            try
+            {
+                if (SteamAPI.Init())
+                {
+                    Console.WriteLine("SteamworksHelper init success");
+                }
+                else
+                {
+                    Console.WriteLine("SteamworksHelper init failed");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERROR: " + e);
+            }
         }
 
         public void handleInput(InputEvent inp, string eventType) {
