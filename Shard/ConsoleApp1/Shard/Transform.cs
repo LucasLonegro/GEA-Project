@@ -147,7 +147,7 @@ namespace Shard {
 
         public void setAnimationFrameDelay(String name, int frameDelay) {
             if (animatorDict != null) {
-                Animator anim = animatorDict[name]; //TODO: ISSUE HEREEEE~!!!!!
+                Animator anim = animatorDict[name]; 
                 anim.FrameDelay = frameDelay;
             }
         }
@@ -167,7 +167,7 @@ namespace Shard {
                     elem.Value.Enabled = false; //Set all to disabled
                     
                     //EXCEPT the animation we want to enable
-                    if (elem.Key == name) { //TODO: can be cleaner?
+                    if (elem.Key == name) { 
                         elem.Value.Enabled = true;
                     }
                 }
