@@ -48,11 +48,11 @@ namespace Shard {
         }
 
         /**
-         * When setting the animation as enabled, the transform property will get an animator assigned.
-         * This animator will then handle changes in spritepath
+         * When setting the animation as enabled, the transform property will get a list of animators.
+         * These animator(s) will then handle changes in spritepath
          */
         public void setAnimationEnabled() {
-            transform.Animator = new Animator();
+            transform.AnimatorDict = new Dictionary<string, Animator>();
         }
 
         public void setPhysicsEnabled() {
