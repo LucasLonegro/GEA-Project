@@ -29,16 +29,19 @@ namespace GameTest
             MyBody.MaxTorque = 100;
             MyBody.Mass = 1;
             MyBody.AngularDrag = 0.0f;
+            MyBody.Drag = 0.05f;
             MyBody.MaxForce = 100;
-            MyBody.UsesGravity = true;
+            MyBody.Velocity = this.Transform.Right * 2.5f;
+            MyBody.UsesGravity = false;
             MyBody.StopOnCollision = false;
-            MyBody.ReflectOnCollision = true;
+            MyBody.ReflectOnCollision = false;
+            MyBody.ImpartForce = true;
+            MyBody.RepelBodies = true;
             //            MyBody.Kinematic = true;
 
 
-            MyBody.addForce(this.Transform.Right, 20.5f);
             //            MyBody.addCircleCollider(32, 32, 30);
-            MyBody.addRectCollider();
+            MyBody.addCircleCollider();
             Bootstrap.getInput().addListener(this);
 
             addTag("Asteroid");
@@ -50,7 +53,7 @@ namespace GameTest
         {
             for (int i = 0; i < torqueCounter; i++)
             {
-                MyBody.addTorque(0.1f);
+                MyBody.addTorque(1.0f);
             }
 
             if (torqueCounter > 0)

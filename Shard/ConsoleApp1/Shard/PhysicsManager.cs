@@ -286,7 +286,7 @@ namespace Shard
             }
 
             //            Debug.Log("Tick: " + Bootstrap.TimeElapsed);
-
+            float interval = Bootstrap.getCurrentMillis() - lastUpdate;
             lastUpdate = Bootstrap.getCurrentMillis();
 
 
@@ -299,7 +299,7 @@ namespace Shard
                     body.applyGravity(gravityModifier, gravityDir);
                 }
 
-                body.physicsTick();
+                body.physicsTick(interval);
                 body.recalculateColliders();
 
 
@@ -338,6 +338,17 @@ namespace Shard
                     ch.onCollisionExit(col.B);
                     ch2.onCollisionExit(col.A);
                     toRemove.Add(col);
+                }
+                
+                if (col.A.RepelBodies && col.B.RepelBodies)
+                {
+                    Vector2 distanceVector = col.A.Trans.Centre - col.B.Trans.Centre;
+                    float distance = distanceVector.Length();
+                    Vector2 repellingVector =
+                        (distanceVector.Length() == 0 ? distanceVector : distanceVector / (distance * distance)) * 10000 * (float)Bootstrap.getDeltaTime();
+                    col.A.addForce(repellingVector);
+                    col.B.addForce(-repellingVector);
+                    
                 }
 
             }
@@ -463,7 +474,6 @@ namespace Shard
                     if (ob.A.PassThrough != true && ob.B.PassThrough != true)
                     {
 
-
                         massTotal = ob.A.Mass + ob.B.Mass;
 
                         if (ob.A.Kinematic)
@@ -479,8 +489,11 @@ namespace Shard
 
                         if (ob.A.ImpartForce)
                         {
-                            ob.A.impartForces(ob.B, massProp);
-                            ob.A.reduceForces(1.0f - massProp);
+                            ob.A.addForce(ob.B.Velocity * (1 - massProp));
+                            ob.B.addForce(ob.B.Velocity * (massProp - 1));
+                            
+                            ob.A.addForce(ob.A.Velocity * -massProp);
+                            ob.B.addForce(ob.A.Velocity * massProp);
                         }
 
                         massb = massProp;
