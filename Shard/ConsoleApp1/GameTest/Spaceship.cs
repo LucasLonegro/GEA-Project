@@ -14,19 +14,6 @@ namespace GameTest {
         public Spaceship(bool isPlayer1) {
             isPlayer1Controlled = isPlayer1;
             isPlayer2Controlled = !isPlayer1;
-            // Assign animations based on which player this spaceship belongs to
-            if (isPlayer1Controlled){
-                Transform.addSpritePaths([
-                    Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
-                    // Bootstrap.getAssetManager().getAssetPath("spaceship2.png")
-                ]);
-            }
-            else{
-                Transform.addSpritePaths([
-                    Bootstrap.getAssetManager().getAssetPath("spaceship3.png"),
-                    // Bootstrap.getAssetManager().getAssetPath("spaceship4.png")
-                ]);
-            }
         }
         
         public override void initialize() {
