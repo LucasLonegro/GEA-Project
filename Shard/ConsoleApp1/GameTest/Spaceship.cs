@@ -17,13 +17,13 @@ namespace GameTest {
             // Assign animations based on which player this spaceship belongs to
             if (isPlayer1Controlled){
                 Transform.addSpritePaths([
-                    Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
+                    Bootstrap.getAssetManager().getAssetPath("spaceshipA.png"),
                     // Bootstrap.getAssetManager().getAssetPath("spaceship2.png")
                 ]);
             }
             else{
                 Transform.addSpritePaths([
-                    Bootstrap.getAssetManager().getAssetPath("spaceship3.png"),
+                    Bootstrap.getAssetManager().getAssetPath("spaceshipB.png"),
                     // Bootstrap.getAssetManager().getAssetPath("spaceship4.png")
                 ]);
             }
