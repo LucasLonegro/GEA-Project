@@ -20,10 +20,6 @@ namespace Shard {
         }
 
         public void createShips() {
-            // GameObject ship = new Spaceship();
-            // Random rand = new Random();
-            // int offsetx = 0, offsety = 0;
-            //
             // 🎮 Player 1 Ship (Controlled as before)
             GameObject playerOne = new Spaceship(true);
             playerOne.Transform.X = 200;
