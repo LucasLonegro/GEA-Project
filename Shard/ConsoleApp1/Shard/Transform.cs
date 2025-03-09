@@ -123,11 +123,9 @@ namespace Shard {
         /**
          * Creates an animator with spritepaths for a specific animation
          */
-        public void addAnimation(String name, List<string> spritePathList) {
+        public void addAnimation(String name, List<string> spritePathList, string triggerType, int trigger) {
             if (animatorDict != null) {
-                Animator anim = new Animator();
-                anim.SpritePathList = spritePathList;
-                anim.CurrentSpritePath = spritePathList[0];
+                Animator anim = new Animator(spritePathList, triggerType, trigger, 0);
                 animatorDict.Add(name, anim);
             }
         }
@@ -135,12 +133,9 @@ namespace Shard {
         /**
          * Overloaded method. Can add the framedelay when creating animation
          */
-        public void addAnimation(String name, List<string> spritePathList, int frameDelay) {
+        public void addAnimation(String name, List<string> spritePathList, string triggerType, int trigger, int frameDelay) {
             if (animatorDict != null) {
-                Animator anim = new Animator();
-                anim.SpritePathList = spritePathList;
-                anim.CurrentSpritePath = spritePathList[0];
-                anim.FrameDelay = frameDelay;
+                Animator anim = new Animator(spritePathList, triggerType, trigger, frameDelay);
                 animatorDict.Add(name, anim);
             }
         }

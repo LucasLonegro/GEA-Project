@@ -11,7 +11,7 @@
 
 namespace Shard
 {
-    class InputEvent
+    public class InputEvent
     {
         private int x;
         private int y;

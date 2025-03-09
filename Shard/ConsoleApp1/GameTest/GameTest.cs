@@ -24,6 +24,12 @@ namespace Shard {
             GameObject playerOne = new Spaceship(true);
             playerOne.Transform.X = 200;
             playerOne.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
+            playerOne.setAnimationEnabled();
+            playerOne.Transform.addAnimation("go", [
+                Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
+                Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
+                Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
+            ], "KeyDown", (int) SDL.SDL_Scancode.SDL_SCANCODE_W);
 
             // 🎮 Player 2 Ship (Controlled with Arrow Keys)
             GameObject playerTwo = new Spaceship(false);
