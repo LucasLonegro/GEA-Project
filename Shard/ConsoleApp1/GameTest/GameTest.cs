@@ -21,6 +21,30 @@ namespace Shard {
         public override int getTargetFrameRate() {
             return 100;
         }
+        
+        private static void writeSteamAppIdTxtFile() {
+            string strCWDPath = Directory.GetCurrentDirectory();
+            string strSteamAppIdPath = Path.Combine(strCWDPath, "steam_appid.txt");
+
+            // If the steam_appid.txt file already exists, then there's nothing to do.
+            if (File.Exists(strSteamAppIdPath)) {
+                return;
+            }
+
+            Debug.Log("[Steamworks.NET] 'steam_appid.txt' is not present in the project root. Writing...");
+
+            try {
+                StreamWriter appIdFile = File.CreateText(strSteamAppIdPath);
+                appIdFile.Write("480");
+                appIdFile.Close();
+
+                Debug.Log("[Steamworks.NET] Successfully copied 'steam_appid.txt' into the project root.");
+            }
+            catch (System.Exception e) {
+                Console.WriteLine("[Steamworks.NET] Could not copy 'steam_appid.txt' into the project root. Please place 'steam_appid.txt' into the project root manually.");
+                Console.WriteLine(e);
+            }
+        }
 
         public void createShips() {
             // 🎮 Player 1 Ship (Controlled as before)
@@ -33,11 +57,6 @@ namespace Shard {
             playerTwo.Transform.X = Bootstrap.getDisplay().getWidth() - 200;;  // Different starting position
             playerTwo.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
 
-            GameObject asteroid;
-
-
-//            asteroid.MyBody.Kinematic = true;
-          
             background = new GameObject();
             background.Transform.SpritePath = getAssetManager().getAssetPath("background2.jpg");
             background.Transform.X = 0;
@@ -54,6 +73,7 @@ namespace Shard {
             asteroids = new List<GameObject>();
             
             Console.WriteLine("Steam is running " + SteamAPI.IsSteamRunning());
+            writeSteamAppIdTxtFile();
             try
             {
                 if (SteamAPI.Init())
