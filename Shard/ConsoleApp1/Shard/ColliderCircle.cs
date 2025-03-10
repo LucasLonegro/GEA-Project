@@ -106,7 +106,7 @@ namespace Shard
             calculateBoundingBox();
         }
 
-        public override Vector2? checkCollision(ColliderRect other)
+        public override (Vector2?, double?) checkCollision(ColliderRect other)
         {
 
             double tx = X;
@@ -174,10 +174,10 @@ namespace Shard
 
 
 
-                return dir;
+                return (dir, depth);
             }
 
-            return null;
+            return (null, null);
         }
 
         public override void drawMe(Color col)
@@ -188,7 +188,7 @@ namespace Shard
 
         }
 
-        public override Vector2? checkCollision(ColliderCircle c)
+        public override (Vector2?, double?) checkCollision(ColliderCircle c)
         {
             double dist, depth, radsq;
             double xpen, ypen;
@@ -211,11 +211,11 @@ namespace Shard
                 dir = Vector2.Normalize(dir);
 
                 dir *= (float)depth;
-
-                return dir;
+                Console.WriteLine("depth: " + (depth));
+                return (dir, depth);
             }
 
-            return null;
+            return (null, null);
         }
 
         public override float[] getMinAndMaxX()
@@ -228,7 +228,7 @@ namespace Shard
             return MinAndMaxY;
         }
 
-        public override Vector2? checkCollision(Vector2 c)
+        public override (Vector2?, double?) checkCollision(Vector2 c)
         {
 
             if (c.X >= Left &&
@@ -236,9 +236,9 @@ namespace Shard
                 c.Y >= Top &&
                 c.Y <= Bottom)
             {
-                return new Vector2(0, 0);
+                return (new Vector2(0, 0), 0.0);
             }
-            return null;
+            return (null, null);
         }
     }
 }

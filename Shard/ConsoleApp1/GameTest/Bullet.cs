@@ -1,6 +1,7 @@
 ﻿using Shard;
 using System;
 using System.Drawing;
+using System.Numerics;
 
 namespace GameTest
 {
@@ -25,12 +26,16 @@ namespace GameTest
 
             //            MyBody.addCircleCollider((int)x, (int)y, 5);
 
-            MyBody.Mass = 100;
+            MyBody.Mass = 0.1f;
             MyBody.MaxForce = 50;
-            //            MyBody.addTorque(0.001f);
+            MyBody.Velocity = or.Transform.Forward * 10.0f;
+            MyBody.Drag = 0.0f;
 
-            MyBody.PassThrough = true;
-
+            MyBody.PassThrough = false;
+            MyBody.ImpartForce = true;
+            MyBody.RepelBodies = true;
+            MyBody.ReflectOnCollision = false;
+            MyBody.onColliders(c => c.ignoreCollider(or));
         }
 
         public override void initialize()
@@ -40,7 +45,6 @@ namespace GameTest
 
         public override void physicsUpdate()
         {
-            MyBody.addForce(this.Transform.Forward, 100.0f);
         }
 
         public override void update()
@@ -68,7 +72,7 @@ namespace GameTest
 
         public void onCollisionEnter(PhysicsBody x)
         {
-            if (x.Parent.checkTag("Spaceship") == false)
+            if (x.Parent.checkTag("Spaceship") == false && false)
             {
                 Debug.Log("Boom! " + x);
                 ToBeDestroyed = true;
