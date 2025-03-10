@@ -196,7 +196,7 @@ namespace Shard {
                 System.Environment.GetFolderPath(System.Environment.SpecialFolder.Fonts);
 
             IntPtr font = loadFont(ffolder + Path.DirectorySeparatorChar + "calibri.ttf", size);
-            Console.WriteLine(ffolder + Path.DirectorySeparatorChar + "calibri.ttf");
+            //Console.WriteLine(ffolder + Path.DirectorySeparatorChar + "calibri.ttf");
             SDL.SDL_Color col = new SDL.SDL_Color();
 
             col.r = (byte)r;
@@ -205,7 +205,7 @@ namespace Shard {
             col.a = (byte)255;
 
             if (font == IntPtr.Zero) {
-                Debug.getInstance().log("TTF_OpenFont: " + SDL.SDL_GetError());
+                //Debug.getInstance().log("TTF_OpenFont: " + SDL.SDL_GetError());
             }
 
             TextDetails td = new TextDetails(text, x, y, col, 12);

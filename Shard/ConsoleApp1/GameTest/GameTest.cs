@@ -33,8 +33,6 @@ namespace Shard {
             GameObject asteroid;
 
 
-//            asteroid.MyBody.Kinematic = true;
-          
             background = new GameObject();
             background.Transform.SpritePath = getAssetManager().getAssetPath("background2.jpg");
             background.Transform.X = 0;
@@ -49,6 +47,10 @@ namespace Shard {
             Bootstrap.getSound().playBackgroundMusic("retroBackground.wav");
 
             asteroids = new List<GameObject>();
+            new ScreenEdge(ScreenEdge.ScreenEdgeType.Top);
+            new ScreenEdge(ScreenEdge.ScreenEdgeType.Bottom);
+            new ScreenEdge(ScreenEdge.ScreenEdgeType.Left);
+            new ScreenEdge(ScreenEdge.ScreenEdgeType.Right);
         }
 
         public void handleInput(InputEvent inp, string eventType) {

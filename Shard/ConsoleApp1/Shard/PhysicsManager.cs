@@ -85,6 +85,12 @@ namespace Shard
         internal SAPEntry Next { get => next; set => next = value; }
     }
 
+    public enum OnEdgeCollision
+    {
+        Nothing,
+        Rebound,
+        MarkForDestruction,
+    }
 
     class PhysicsManager
     {
@@ -311,7 +317,7 @@ namespace Shard
             {
                 ch = col.A.Colh;
                 ch2 = col.B.Colh;
-                Vector2? impulse;
+                (Vector2?,double?) impulse;
 
                 // If the object has been destroyed in the interim, it should still 
                 // trigger a collision exit.
@@ -328,10 +334,18 @@ namespace Shard
 
                 impulse = checkCollisionBetweenObjects(col.A, col.B);
 
-                if (impulse != null)
+                if (impulse.Item1 != null && impulse.Item2 != null)
                 {
                     ch.onCollisionStay(col.B);
                     ch2.onCollisionStay(col.A);
+                    if (col.A.RepelBodies && col.B.RepelBodies && !col.A.PassThrough && !col.B.PassThrough)
+                    {
+                        Vector2 distanceVector = col.A.Trans.Centre - col.B.Trans.Centre;
+                        float distance = (float) impulse.Item2.Value;
+                        Vector2 repellingVector = distance * distanceVector * (float)Bootstrap.getDeltaTime();
+                        col.A.addForce(repellingVector);
+                        col.B.addForce(-repellingVector);
+                    }
                 }
                 else
                 {
@@ -340,16 +354,6 @@ namespace Shard
                     toRemove.Add(col);
                 }
                 
-                if (col.A.RepelBodies && col.B.RepelBodies)
-                {
-                    Vector2 distanceVector = col.A.Trans.Centre - col.B.Trans.Centre;
-                    float distance = distanceVector.Length();
-                    Vector2 repellingVector =
-                        (distanceVector.Length() == 0 ? distanceVector : distanceVector / (distance * distance)) * 10000 * (float)Bootstrap.getDeltaTime();
-                    col.A.addForce(repellingVector);
-                    col.B.addForce(-repellingVector);
-                    
-                }
 
             }
 
@@ -379,9 +383,9 @@ namespace Shard
             }
         }
 
-        private Vector2? checkCollisionBetweenObjects(PhysicsBody a, PhysicsBody b)
+        private (Vector2?, double?) checkCollisionBetweenObjects(PhysicsBody a, PhysicsBody b)
         {
-            Vector2? impulse;
+            (Vector2?, double?) impulse;
 
             foreach (Collider col in a.getColliders())
             {
@@ -390,14 +394,14 @@ namespace Shard
                     impulse = col.checkCollision(col2);
 
 
-                    if (impulse != null)
+                    if (impulse.Item1 != null)
                     {
                         return impulse;
                     }
                 }
             }
 
-            return null;
+            return (null,null);
 
         }
 
@@ -455,7 +459,7 @@ namespace Shard
         private void narrowPass()
         {
             Vector2 impulse;
-            Vector2? possibleImpulse;
+            (Vector2?, double?) possibleImpulse;
             float massTotal, massa, massb;
             float massProp = 0.0f;
 
@@ -466,25 +470,17 @@ namespace Shard
 
                 possibleImpulse = checkCollisionBetweenObjects(ob.A, ob.B);
 
-                if (possibleImpulse.HasValue)
+                if (possibleImpulse.Item1.HasValue)
                 {
-                    impulse = possibleImpulse.Value;
+                    impulse = possibleImpulse.Item1.Value;
                     Debug.Log("Col is " + ob + ", impulse " + possibleImpulse);
 
-                    if (ob.A.PassThrough != true && ob.B.PassThrough != true)
+                    if (!ob.A.PassThrough && !ob.B.PassThrough)
                     {
 
                         massTotal = ob.A.Mass + ob.B.Mass;
 
-                        if (ob.A.Kinematic)
-                        {
-                            massProp = 1;
-                        }
-                        else
-                        {
-                            massProp = ob.A.Mass / massTotal;
-
-                        }
+                        massProp = ob.A.Mass / massTotal;
 
 
                         if (ob.A.ImpartForce)
@@ -494,32 +490,6 @@ namespace Shard
                             
                             ob.A.addForce(ob.A.Velocity * -massProp);
                             ob.B.addForce(ob.A.Velocity * massProp);
-                        }
-
-                        massb = massProp;
-
-                        if (ob.B.Kinematic == false)
-                        {
-                            ob.B.Parent.Transform.translate(-1 * (impulse.X * massProp), -1 * (impulse.Y * massProp));
-                        }
-
-
-                        if (ob.B.Kinematic)
-                        {
-                            massProp = 1;
-                        }
-                        else
-                        {
-                            massProp = 1.0f - massProp;
-                        }
-
-                        massa = massProp;
-
-
-                        if (ob.A.Kinematic == false)
-                        {
-
-                            ob.A.Parent.Transform.translate((impulse.X * massProp), (impulse.Y * massProp));
                         }
 
 

@@ -9,6 +9,9 @@ namespace GameTest {
 
         bool isPlayer1Controlled, isPlayer2Controlled;
 
+        private static float fireDelay = 0.05f;
+        private float fireCooldown = 0;
+
         
         // Constructor to determine player control
         public Spaceship(bool isPlayer1) {
@@ -35,13 +38,6 @@ namespace GameTest {
 
             //Animation test
             setAnimationEnabled();
-            
-            //Two ways of adding animations: adding the spritepaths as a list:
-            // Transform.addSpritePaths([
-            //     Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
-            //     Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
-            //     Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
-            // ]);
 
             Bootstrap.getInput().addListener(this);
             
@@ -72,6 +68,12 @@ namespace GameTest {
         }
 
         public void fireBullet() {
+            if (fireCooldown < fireDelay)
+            {
+                return;
+            }
+            fireCooldown = 0;
+            
             Bullet b = new Bullet();
 
             b.setupBullet(this, this.Transform.Centre.X, this.Transform.Centre.Y);
@@ -126,6 +128,7 @@ namespace GameTest {
 
         public override void update() {
             Bootstrap.getDisplay().addToDraw(this);
+            fireCooldown += (float)Bootstrap.getDeltaTime();
         }
 
         public void onCollisionEnter(PhysicsBody x) {
