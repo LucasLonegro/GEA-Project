@@ -52,7 +52,7 @@ namespace Shard {
          * This animator will then handle changes in spritepath
          */
         public void setAnimationEnabled() {
-            transform.Animator = new Animator();
+            transform.AnimatorDict = new Dictionary<string, Animator>();
         }
 
         public void setPhysicsEnabled() {
