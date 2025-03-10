@@ -8,17 +8,24 @@ public class Animator {
     private int frameCounter;
     private List<string> spritePathList;
     private string currentSpritePath;
+    private bool enabled;
+    private int frameDelay;
+    private int ctr;
 
-    public Animator() {
-        spritePathList = new List<string>();
-        frameDelay = 0;
-        frameCounter = 0;
+    public Animator(List<string> spritePathList, int frameDelay) {
+        this.spritePathList = spritePathList;
+        currentSpritePath = spritePathList[0];
+        this.frameDelay = frameDelay;
     }
 
-    public Animator(int frameDelay) {
-        spritePathList = new List<string>();
-        this.frameDelay = frameDelay;
-        frameCounter = 0;
+    public bool Enabled {
+        get => enabled;
+        set => enabled = value;
+    }
+
+    public int FrameDelay {
+        get => frameDelay;
+        set => frameDelay = value;
     }
 
     public string CurrentSpritePath {
@@ -31,6 +38,7 @@ public class Animator {
         set => spritePathList = value;
     }
 
+    //I don't think we'll need this
     public void addSpritePath(string spritePath) {
         if (!spritePathList.Contains(spritePath)) {
             spritePathList.Add(spritePath);
@@ -43,31 +51,25 @@ public class Animator {
             spritePathList.Remove(spritePath);
         }
         else {
-            Debug.Log("[LISA] Tried to remove spritePath " + spritePath + " but it doesn't exist.");
+            Debug.Log("Tried to remove spritePath " + spritePath + " but it doesn't exist.");
         }
     }
 
     public string nextSprite() {
+        
+        int index = spritePathList.IndexOf(currentSpritePath);
+        int nextIndex = (index + 1) % (spritePathList.Count);
+        string nextSprite = spritePathList[nextIndex];
 
-        if (frameDelay != 0) { //If there is a frame delay
-            if (frameCounter < frameDelay) { //New frame is not needed yet, return current frame
-                frameCounter++;
-                return currentSpritePath;
-            }
-
-            if (frameCounter == frameDelay) { //New frame will be needed, reset counter
-                frameCounter = 0;
-            }
+        if (ctr >= frameDelay) {
+            ctr = 0;
+            currentSpritePath = nextSprite;
+            return nextSprite;
         }
         
-        //Get next frame
-        int index = spritePathList.IndexOf(currentSpritePath);
-        int nextIndex = (index + 1) % (spritePathList.Count); 
-        // Debug.Log("[LISA] current:" + spritePathList[index]);
-        // Debug.Log("[LISA] next:" + spritePathList[nextIndex]);
-                
-        currentSpritePath = spritePathList[nextIndex];
-        return spritePathList[nextIndex];
+        ctr++;
+        return currentSpritePath;
+        
     }
 
 }
