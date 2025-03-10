@@ -27,7 +27,7 @@ namespace Shard {
         private string spritePath;
         private Vector2 forward;
         private Vector2 right, centre;
-        private Animator animator;
+        private Dictionary<string, Animator> animatorDict;
 
         public Vector2 getLastDirection() {
             float dx, dy;
@@ -115,42 +115,90 @@ namespace Shard {
             set => rotz = value;
         }
 
-        public Animator Animator {
-            get => animator;
-            set => animator = value;
+        public Dictionary<string, Animator> AnimatorDict {
+            get => animatorDict;
+            set => animatorDict = value;
         }
 
-        public void addSpritePaths(List<string> paths) {
-            if (animator != null) {
-                animator.SpritePathList = paths;
-                animator.CurrentSpritePath = paths[paths.Count - 1];
+        /**
+         * Creates an animator with spritepaths for a specific animation
+         */
+        public void addAnimation(String name, List<string> spritePathList) {
+            if (animatorDict != null) {
+                Animator anim = new Animator();
+                anim.SpritePathList = spritePathList;
+                anim.CurrentSpritePath = spritePathList[0];
+                animatorDict.Add(name, anim);
             }
-            spritePath = paths[paths.Count - 1];
+        }
+        
+        /**
+         * Overloaded method. Can add the framedelay when creating animation
+         */
+        public void addAnimation(String name, List<string> spritePathList, int frameDelay) {
+            if (animatorDict != null) {
+                Animator anim = new Animator();
+                anim.SpritePathList = spritePathList;
+                anim.CurrentSpritePath = spritePathList[0];
+                anim.FrameDelay = frameDelay;
+                animatorDict.Add(name, anim);
+            }
+        }
+
+        public void setAnimationFrameDelay(String name, int frameDelay) {
+            if (animatorDict != null) {
+                Animator anim = animatorDict[name]; 
+                anim.FrameDelay = frameDelay;
+            }
         }
 
         public string SpritePath {
             get => spritePath;
-            set {
-                if (animator != null) { //If animated, add every spritepath that is set to the list
-                    animator.addSpritePath(value);
-                    animator.CurrentSpritePath = value;
+            set => spritePath = value;
+        }
+
+        /**
+         * Enables a specific animation using its name
+         */
+        public void enableAnimation(string name) {
+            //If there is at least 1 animation present...
+            if (animatorDict != null) { 
+                foreach (KeyValuePair<string, Animator> elem in animatorDict) {
+                    elem.Value.Enabled = false; //Set all to disabled
+                    
+                    //EXCEPT the animation we want to enable
+                    if (elem.Key == name) { 
+                        elem.Value.Enabled = true;
+                    }
                 }
-                spritePath = value;
             }
         }
 
         /**
-         * For DisplaySDL to use.
-         * Updates the spritepath to the next sprite if animated, otherwise it does not.
+         * Disables all animations, so the spritepath will go back to default
+         */
+        public void disableAnimation() {
+            if (animatorDict != null) { //If there is at least 1 animation present
+                foreach (KeyValuePair<string, Animator> elem in animatorDict) {
+                    elem.Value.Enabled = false; //Set all to disabled
+                }
+            }
+        }
+
+        /**
+         * Method that returns the next spritepath in case one of the animations is enabled
          */
         public string getSpritePathUpdated() {
-            if (animator != null) { //If animated, return the next sprite
-                string nextSprite = animator.nextSprite();
-                spritePath = nextSprite;
-                return nextSprite;
+            if (animatorDict != null) {
+                foreach (Animator anim in animatorDict.Values) {
+                    if (anim.Enabled) {
+                        return anim.nextSprite();
+                    }
+                }
             }
-            return spritePath; //else return same as always
+            return spritePath;
         }
+
 
         public ref Vector2 Forward {
             get => ref forward;

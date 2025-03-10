@@ -16,17 +16,10 @@ namespace GameTest {
             isPlayer2Controlled = !isPlayer1;
 
             // Assign animations based on which player this spaceship belongs to
-            if (isPlayer1Controlled){
-                Transform.addSpritePaths([
-                    Bootstrap.getAssetManager().getAssetPath("spaceshipA.png"),
-                    // Bootstrap.getAssetManager().getAssetPath("spaceship2.png")
-                ]);
-            }
-            else{
-                Transform.addSpritePaths([
-                    Bootstrap.getAssetManager().getAssetPath("spaceshipB.png"),
-                    // Bootstrap.getAssetManager().getAssetPath("spaceship4.png")
-                ]);
+            if (isPlayer1Controlled) {
+                Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceshipA.png");
+            } else{
+                Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceshipB.png");
             }
 
         }
@@ -112,8 +105,14 @@ namespace GameTest {
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_LEFT) turnLeft2 = true;
             }
             else if (eventType == "KeyUp") {
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) up = false;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) down = false;
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) {
+                    up = false;
+                    Transform.disableAnimation();
+                }
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) {
+                    down = false;
+                    Transform.disableAnimation();
+                }
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D) turnRight = false;
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_A) turnLeft = false;
                 
