@@ -10,8 +10,10 @@ public class Animator {
     private int frameDelay;
     private int ctr;
 
-    public Animator() {
-        spritePathList = new List<string>();
+    public Animator(List<string> spritePathList, int frameDelay) {
+        this.spritePathList = spritePathList;
+        currentSpritePath = spritePathList[0];
+        this.frameDelay = frameDelay;
     }
 
     public bool Enabled {

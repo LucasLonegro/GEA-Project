@@ -125,9 +125,7 @@ namespace Shard {
          */
         public void addAnimation(String name, List<string> spritePathList) {
             if (animatorDict != null) {
-                Animator anim = new Animator();
-                anim.SpritePathList = spritePathList;
-                anim.CurrentSpritePath = spritePathList[0];
+                Animator anim = new Animator(spritePathList, 0);
                 animatorDict.Add(name, anim);
             }
         }
@@ -137,10 +135,7 @@ namespace Shard {
          */
         public void addAnimation(String name, List<string> spritePathList, int frameDelay) {
             if (animatorDict != null) {
-                Animator anim = new Animator();
-                anim.SpritePathList = spritePathList;
-                anim.CurrentSpritePath = spritePathList[0];
-                anim.FrameDelay = frameDelay;
+                Animator anim = new Animator(spritePathList, frameDelay);
                 animatorDict.Add(name, anim);
             }
         }
