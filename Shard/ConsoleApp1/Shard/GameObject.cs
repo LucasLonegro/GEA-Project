@@ -56,7 +56,7 @@ namespace Shard {
         }
 
         public void setAnimationEnabled(int frameDelay) {
-            transform.Animator = new Animator(frameDelay);
+            transform.AnimatorDict = new Dictionary<string, Animator>();
         }
 
         public void setPhysicsEnabled() {

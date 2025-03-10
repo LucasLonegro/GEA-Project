@@ -4,7 +4,6 @@ namespace Shard;
 
 public class Animator {
 
-    private int frameDelay;
     private int frameCounter;
     private List<string> spritePathList;
     private string currentSpritePath;
