@@ -14,6 +14,7 @@ namespace GameTest {
         public Spaceship(bool isPlayer1) {
             isPlayer1Controlled = isPlayer1;
             isPlayer2Controlled = !isPlayer1;
+
             // Assign animations based on which player this spaceship belongs to
             if (isPlayer1Controlled){
                 Transform.addSpritePaths([
@@ -27,6 +28,7 @@ namespace GameTest {
                     // Bootstrap.getAssetManager().getAssetPath("spaceship4.png")
                 ]);
             }
+
         }
         
         public override void initialize() {
@@ -36,12 +38,16 @@ namespace GameTest {
             //Animation test
             setAnimationEnabled();
             
-            //Two ways of adding animations: adding the spritepaths as a list:
-            // Transform.addSpritePaths([
-            //     Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
-            //     Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
-            //     Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
-            // ]);
+            Transform.addAnimation("go", [
+                Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
+                Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
+                Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
+            ], 30);
+            
+            Transform.addAnimation("nogo", [
+                Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
+            ]);
+
 
             Bootstrap.getInput().addListener(this);
             
@@ -83,8 +89,20 @@ namespace GameTest {
 
         public void handleInput(InputEvent inp, string eventType) {
             if (eventType == "KeyDown") {
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) up = true;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) down = true;
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) {
+                    up = true;
+                    if (isPlayer1Controlled) {
+                        Transform.enableAnimation("go"); 
+                    }
+                }
+
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) {
+                    down = true;
+                    if (isPlayer1Controlled) {
+                        Transform.enableAnimation("nogo");
+                    }
+                }
+
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D) turnRight = true;
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_A) turnLeft = true;
                 
