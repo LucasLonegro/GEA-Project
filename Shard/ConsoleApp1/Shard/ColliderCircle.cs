@@ -106,6 +106,19 @@ namespace Shard
             calculateBoundingBox();
         }
 
+        public override Bound? isOutOfBounds(int width, int height)
+        {
+            if (X - Rad < 0)
+                return Bound.Left;
+            if(X + Rad > width)
+                return Bound.Right;
+            if(Y - Rad < 0)
+                return Bound.Top;
+            if(Y + Rad > height)
+                return Bound.Bottom;
+            return null;
+        }
+
         public override (Vector2?, double?) checkCollision(ColliderRect other)
         {
 

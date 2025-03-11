@@ -35,6 +35,7 @@ namespace GameTest
             MyBody.ImpartForce = true;
             MyBody.RepelBodies = true;
             MyBody.ReflectOnCollision = false;
+            MyBody.EdgeCollision = OnEdgeCollision.MarkForDestruction;
             MyBody.onColliders(c => c.ignoreCollider(or));
         }
 

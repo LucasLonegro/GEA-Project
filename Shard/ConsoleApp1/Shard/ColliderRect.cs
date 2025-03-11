@@ -118,6 +118,23 @@ namespace Shard
             calculateBoundingBox();
         }
 
+        public override Bound? isOutOfBounds(int width, int height)
+        {
+            Console.WriteLine(Left);
+            Console.WriteLine(Right);
+            Console.WriteLine(Top);
+            Console.WriteLine(Bottom);
+            if (Left < 0)
+                return Bound.Left;
+            if(Right > width)
+                return Bound.Right;
+            if(Top < 0)
+                return Bound.Top;
+            if(Bottom > height)
+                return Bound.Bottom;
+            return null;
+        }
+        
         public ColliderRect calculateMinkowskiDifference(ColliderRect other)
         {
             float left, right, top, bottom, width, height;
