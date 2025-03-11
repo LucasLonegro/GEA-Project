@@ -120,10 +120,6 @@ namespace Shard
 
         public override Bound? isOutOfBounds(int width, int height)
         {
-            Console.WriteLine(Left);
-            Console.WriteLine(Right);
-            Console.WriteLine(Top);
-            Console.WriteLine(Bottom);
             if (Left < 0)
                 return Bound.Left;
             if(Right > width)
