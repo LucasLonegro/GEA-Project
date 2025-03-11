@@ -28,8 +28,8 @@ namespace GameTest {
         }
         
         public override void initialize() {
-            this.Transform.X = 500.0f;
-            this.Transform.Y = 500.0f;
+            // this.Transform.X = 500.0f;
+            // this.Transform.Y = 500.0f;
 
             //Animation test
             setAnimationEnabled();
