@@ -120,19 +120,6 @@ namespace Shard {
                 }
             }
         }
-        
-        /**
-         * Method that returns the next spritepath in case one of the animations is enabled
-         */
-        public void updateSpritepath() {
-            if (animatorDict != null) {
-                foreach (Animator anim in animatorDict.Values) {
-                    if (anim.Enabled) {
-                        transform.SpritePath = anim.nextSprite();
-                    }
-                }
-            }
-        }
 
         public void setPhysicsEnabled() {
             MyBody = new PhysicsBody(this);

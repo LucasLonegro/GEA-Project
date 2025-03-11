@@ -115,28 +115,24 @@ namespace Shard {
             set => rotz = value;
         }
 
-        // public Dictionary<string, Animator> AnimatorDict {
-        //     get => animatorDict;
-        //     set => animatorDict = value;
-        // }
-
         public string SpritePath {
             get => spritePath;
             set => spritePath = value;
         }
-        
+
         /**
-         * Method that returns the next spritepath in case one of the animations is enabled
+         * Method that sets the next spritepath in case one of the animations is enabled
          */
-        public void updateSpritepath() {
+        public string getNextSpritepath() {
             if (owner.AnimatorDict != null) {
                 foreach (Animator anim in owner.AnimatorDict.Values) {
                     if (anim.Enabled) {
-                        SpritePath = anim.nextSprite();
+                        return anim.nextSprite();
                     }
                 }
             }
-            spritePath = SpritePath;
+
+            return spritePath;
         }
 
         public ref Vector2 Forward {
