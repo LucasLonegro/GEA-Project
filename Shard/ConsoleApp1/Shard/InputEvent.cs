@@ -44,5 +44,16 @@ namespace Shard
             get => key;
             set => key = value;
         }
+
+        public InputEvent copyOf()
+        {
+            InputEvent copy = new InputEvent();
+            copy.X = x;
+            copy.Y = y;
+            copy.Button = button;
+            copy.Classification = classification;
+            copy.Key = key;
+            return copy;
+        }
     }
 }

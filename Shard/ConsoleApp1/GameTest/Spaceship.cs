@@ -1,12 +1,16 @@
-﻿using SDL2;
+﻿using System;
+using System.Collections.Generic;
+using SDL2;
 using Shard;
 using System.Drawing;
 
-namespace GameTest {
-    class Spaceship : GameObject, InputListener, CollisionHandler {
+namespace GameTest
+{
+    class Spaceship : GameObject, InputListener, CollisionHandler
+    {
         bool up, down, turnLeft, turnRight;
 
-        private int upKey, downKey, leftKey, rightKey, shootKey;
+        bool isPlayer1Controlled, isPlayer2Controlled;
 
         private static float fireDelay = 0.05f;
         private float fireCooldown = 0;
@@ -16,26 +20,62 @@ namespace GameTest {
 
 
         // Constructor to determine player control
-        public Spaceship(bool isPlayer1) {
-            if (isPlayer1) {
-                upKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_W;
-                downKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_S;
-                leftKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_A;
-                rightKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_D;
-                shootKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_SPACE;
+        public Spaceship(bool isPlayer1)
+        {
+            isPlayer1Controlled = isPlayer1;
+            isPlayer2Controlled = !isPlayer1;
+
+            // Assign animations based on which player this spaceship belongs to
+            if (isPlayer1Controlled)
+            {
+                Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceshipA.png");
             }
-            else {
-                upKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_UP;
-                downKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_DOWN;
-                leftKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_LEFT;
-                rightKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_RIGHT;
-                shootKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_RCTRL;
+            else
+            {
+                Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceshipB.png");
+            }
+            
+            InputSystem il = Bootstrap.getInput();
+            
+            if (!isPlayer1Controlled)
+            {
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_W, 0);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_S, 0);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_D, 0);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_A, 0);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_SPACE, 0);
+                
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_UP, (int)SDL.SDL_Scancode.SDL_SCANCODE_W);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_DOWN, (int)SDL.SDL_Scancode.SDL_SCANCODE_S);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_RIGHT, (int)SDL.SDL_Scancode.SDL_SCANCODE_D);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_LEFT, (int)SDL.SDL_Scancode.SDL_SCANCODE_A);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_RCTRL, (int)SDL.SDL_Scancode.SDL_SCANCODE_SPACE);
             }
         }
 
-        public override void initialize() {
+        public override void initialize()
+        {
+            // this.Transform.X = 500.0f;
+            // this.Transform.Y = 500.0f;
 
-            Bootstrap.getInput().addListener(this);
+            //Animation test
+            setAnimationEnabled();
+
+
+            Transform.addAnimation("go", [
+                Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
+                Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
+                Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
+            ], 30);
+
+            Transform.addAnimation("nogo", [
+                Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
+            ]);
+
+            InputSystem il = Bootstrap.getInput();
+            il.addListener(this);
+
+            up = down = turnLeft = turnRight = false;
 
             setPhysicsEnabled();
 
@@ -61,8 +101,10 @@ namespace GameTest {
             addTag("Spaceship");
         }
 
-        public void fireBullet() {
-            if (fireCooldown < fireDelay) {
+        public void fireBullet()
+        {
+            if (fireCooldown < fireDelay)
+            {
                 return;
             }
 
@@ -77,58 +119,88 @@ namespace GameTest {
             Bootstrap.getSound().playSound("fire.wav");
         }
 
-        public void handleInput(InputEvent inp, string eventType) {
-            if (eventType == "KeyDown") {
-                if (inp.Key == upKey) {
+        public void handleInput(InputEvent inp, string eventType)
+        {
+            Console.WriteLine("I got "+inp.Key);
+            if (eventType == "KeyDown")
+            {
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W)
+                {
                     up = true;
-                    Transform.enableAnimation("go");
+                    if (isPlayer1Controlled)
+                    {
+                        Transform.enableAnimation("go");
+                    }
                 }
-                if (inp.Key == downKey) down = true;
 
-                if (inp.Key == rightKey) turnRight = true;
-                if (inp.Key == leftKey) turnLeft = true;
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S)
+                {
+                    down = true;
+                    if (isPlayer1Controlled)
+                    {
+                        Transform.enableAnimation("nogo");
+                    }
+                }
+
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D) turnRight = true;
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_A) turnLeft = true;
+
             }
-            else if (eventType == "KeyUp") {
-                if (inp.Key == upKey) {
+            else if (eventType == "KeyUp")
+            {
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W)
+                {
                     up = false;
                     Transform.disableAnimation();
                 }
-                if (inp.Key == downKey) down = false;
 
-                if (inp.Key == rightKey) turnRight = false;
-                if (inp.Key == leftKey) turnLeft = false;
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S)
+                {
+                    down = false;
+                    Transform.disableAnimation();
+                }
 
-                if (inp.Key == shootKey) fireBullet();
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D) turnRight = false;
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_A) turnLeft = false;
+
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_SPACE) fireBullet();
             }
         }
 
-        public override void physicsUpdate() {
+        public override void physicsUpdate()
+        {
             if (turnLeft) MyBody.addTorque(-torque);
             if (turnRight) MyBody.addTorque(torque);
-            if (up) MyBody.addForce(Transform.Forward, thrust);
-            if (down) MyBody.addForce(Transform.Forward, -backThrust);
+            if (up) MyBody.addForce(this.Transform.Forward, thrust);
+            if (down) MyBody.addForce(this.Transform.Forward, -backThrust);
         }
 
-        public override void update() {
+        public override void update()
+        {
             Bootstrap.getDisplay().addToDraw(this);
             fireCooldown += (float)Bootstrap.getDeltaTime();
         }
 
-        public void onCollisionEnter(PhysicsBody x) {
-            if (x.Parent.checkTag("Bullet") == false) {
+        public void onCollisionEnter(PhysicsBody x)
+        {
+            if (x.Parent.checkTag("Bullet") == false)
+            {
                 MyBody.DebugColor = Color.Red;
             }
         }
 
-        public void onCollisionExit(PhysicsBody x) {
+        public void onCollisionExit(PhysicsBody x)
+        {
             MyBody.DebugColor = Color.Green;
         }
 
-        public void onCollisionStay(PhysicsBody x) {
+        public void onCollisionStay(PhysicsBody x)
+        {
             MyBody.DebugColor = Color.Blue;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return "Spaceship: [" + Transform.X + ", " + Transform.Y + ", " + Transform.Wid + ", " +
                    Transform.Ht + "]";
         }
