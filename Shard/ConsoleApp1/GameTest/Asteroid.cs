@@ -37,6 +37,7 @@ namespace GameTest
             MyBody.ReflectOnCollision = false;
             MyBody.ImpartForce = true;
             MyBody.RepelBodies = true;
+            MyBody.EdgeCollision = OnEdgeCollision.Rebound;
 
             //            MyBody.addCircleCollider(32, 32, 30);
             MyBody.addCircleCollider();

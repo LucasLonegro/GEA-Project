@@ -63,10 +63,8 @@ namespace Shard {
             
             Bootstrap.getSound().playBackgroundMusic("retroBackground.wav");
 
-            new ScreenEdge(ScreenEdge.ScreenEdgeType.Top);
-            new ScreenEdge(ScreenEdge.ScreenEdgeType.Bottom);
-            new ScreenEdge(ScreenEdge.ScreenEdgeType.Left);
-            new ScreenEdge(ScreenEdge.ScreenEdgeType.Right);
+            asteroids = new List<GameObject>();
+
         }
 
         public void handleInput(InputEvent inp, string eventType) {

@@ -90,6 +90,7 @@ namespace Shard
         Nothing,
         Rebound,
         MarkForDestruction,
+        Stop,
     }
 
     class PhysicsManager
@@ -338,13 +339,15 @@ namespace Shard
                 {
                     ch.onCollisionStay(col.B);
                     ch2.onCollisionStay(col.A);
-                    if (col.A.RepelBodies && col.B.RepelBodies && !col.A.PassThrough && !col.B.PassThrough)
+                    if (col.A.RepelBodies && col.B.RepelBodies)
                     {
                         Vector2 distanceVector = col.A.Trans.Centre - col.B.Trans.Centre;
-                        float distance = (float) impulse.Item2.Value;
-                        Vector2 repellingVector = distance * distanceVector * (float)Bootstrap.getDeltaTime();
+                        float distance = distanceVector.Length();
+                        Vector2 repellingVector =
+                            (distanceVector.Length() == 0 ? distanceVector : distanceVector / (distance * distance)) * 10000 * (float)Bootstrap.getDeltaTime();
                         col.A.addForce(repellingVector);
                         col.B.addForce(-repellingVector);
+                    
                     }
                 }
                 else

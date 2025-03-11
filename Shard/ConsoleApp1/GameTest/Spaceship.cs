@@ -60,6 +60,7 @@ namespace GameTest {
             MyBody.ReflectOnCollision = false;
             MyBody.ImpartForce = true;
             MyBody.RepelBodies = true;
+            MyBody.EdgeCollision = OnEdgeCollision.Stop;
 
 
             //           MyBody.PassThrough = true;

@@ -32,10 +32,20 @@ namespace Shard
 
         }
 
+        public enum Bound
+        {
+            Top,
+            Bottom,
+            Left,
+            Right,
+        }
+
         internal CollisionHandler GameObject { get => gameObject; set => gameObject = value; }
         internal float[] MinAndMaxX { get => minAndMaxX; set => minAndMaxX = value; }
         internal float[] MinAndMaxY { get => minAndMaxY; set => minAndMaxY = value; }
         public bool RotateAtOffset { get => rotateAtOffset; set => rotateAtOffset = value; }
+        
+        public abstract Bound? isOutOfBounds(int width, int height);
 
         public abstract (Vector2?, double?) checkCollision(ColliderRect c);
 
