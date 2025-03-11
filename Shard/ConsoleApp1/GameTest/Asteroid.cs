@@ -37,8 +37,7 @@ namespace GameTest
             MyBody.ReflectOnCollision = false;
             MyBody.ImpartForce = true;
             MyBody.RepelBodies = true;
-            //            MyBody.Kinematic = true;
-
+            MyBody.EdgeCollision = OnEdgeCollision.Rebound;
 
             //            MyBody.addCircleCollider(32, 32, 30);
             MyBody.addCircleCollider();
@@ -72,7 +71,7 @@ namespace GameTest
 
         public void onCollisionEnter(PhysicsBody x)
         {
-            if (x.Parent.checkTag("Bullet") == true)
+            if (x.Parent.checkTag("Bullet") == true && false)
             {
                 ToBeDestroyed = true;
                 Debug.getInstance().log("Boom");

@@ -50,13 +50,14 @@ namespace Shard
         private float mass;
         private double timeInterval;
         private float maxForce, maxTorque;
-        private bool kinematic;
         private bool stopOnCollision;
         private bool reflectOnCollision;
         private bool impartForce;
         private bool passThrough;
         private bool usesGravity;
         private bool repelBodies;
+        private double collisionCooldown = 0;
+        private OnEdgeCollision edgeCollision = OnEdgeCollision.Nothing;
         private Color debugColor;
         public Color DebugColor { get => debugColor; set => debugColor = value; }
 
@@ -72,6 +73,14 @@ namespace Shard
 
         }
 
+        public void onColliders(Action<Collider> action)
+        {
+            foreach (var myCollider in myColliders)
+            {
+                action.Invoke(myCollider);
+            }
+        }
+
         public float AngularDrag { get => angularDrag; set => angularDrag = value; }
         public float Drag { get => drag; set => drag = value; }
         public Vector2 Velocity { get => velocity; set => velocity = value; }
@@ -83,8 +92,11 @@ namespace Shard
         public float[] MinAndMaxY { get => minAndMaxY; set => minAndMaxY = value; }
         public float MaxForce { get => maxForce; set => maxForce = value; }
         public float MaxTorque { get => maxTorque; set => maxTorque = value; }
-        public bool Kinematic { get => kinematic; set => kinematic = value; }
-        public bool PassThrough { get => passThrough; set => passThrough = value; }
+        
+        public double CollisionCooldown { get => collisionCooldown ; set => collisionCooldown = value; }
+        
+        public OnEdgeCollision EdgeCollision { get => edgeCollision; set => edgeCollision = value; }
+        public bool PassThrough { get => passThrough || CollisionCooldown > 0; set => passThrough = value; }
         public bool UsesGravity { get => usesGravity; set => usesGravity = value; }
         public bool StopOnCollision { get => stopOnCollision; set => stopOnCollision = value; }
         public bool ReflectOnCollision { get => reflectOnCollision; set => reflectOnCollision = value; }
@@ -166,10 +178,6 @@ namespace Shard
 
         public void addTorque(float dir)
         {
-            if (Kinematic)
-            {
-                return;
-            }
 
             torque += dir / Mass;
 
@@ -188,11 +196,6 @@ namespace Shard
 
         public void reverseForces(float prop)
         {
-            if (Kinematic)
-            {
-                return;
-            }
-
             force *= -prop;
         }
 
@@ -258,11 +261,6 @@ namespace Shard
 
         public void addForce(Vector2 dir)
         {
-            if (Kinematic)
-            {
-                return;
-            }
-
             dir /= Mass;
 
             // Set a lower bound.
@@ -325,14 +323,96 @@ namespace Shard
                 angularVelocity -= instantAngularDrag * angularVelocity;
             }
         }
+
+        private Collider.Bound? anyCollide()
+        {
+            int width = Bootstrap.getDisplay().getWidth();
+            int height = Bootstrap.getDisplay().getHeight();
+            foreach (Collider myCollider in myColliders)
+            {
+                Collider.Bound? bound;
+                if ((bound = myCollider.isOutOfBounds(width, height)).HasValue)
+                {
+                    return bound;
+                }
+            }
+            return null;
+        }
+
+        private bool isXEscaping(Collider.Bound bound)
+        {
+            return (bound == Collider.Bound.Left && velocity.X < 0) ||
+                   (bound == Collider.Bound.Right && velocity.X > 0);
+        }
+
+        private bool isYEscaping(Collider.Bound bound)
+        {
+            return (bound == Collider.Bound.Bottom && velocity.Y > 0) ||
+                   (bound == Collider.Bound.Top && velocity.Y < 0);
+        }
+
+        private void handleScreenEdgeCollisions()
+        {
+            int width = Bootstrap.getDisplay().getWidth();
+            int height = Bootstrap.getDisplay().getHeight();
+            if (edgeCollision == OnEdgeCollision.Nothing)
+                return;
+            
+            Collider.Bound? bound = anyCollide();
+            if (!bound.HasValue)
+                return;
+
+            bool isXEscaping = this.isXEscaping(bound.Value);
+            bool isYEscaping = this.isYEscaping(bound.Value);
+            
+            switch (edgeCollision)
+            {
+                case OnEdgeCollision.Rebound:
+                    if ( isXEscaping)
+                    {
+                        velocity.X = -velocity.X;
+                    }
+                    if (isYEscaping)
+                    {
+                        velocity.Y = -velocity.Y;
+                    }
+                    break;
+                
+                case OnEdgeCollision.MarkForDestruction:
+                    if (isXEscaping || isYEscaping)
+                        parent.ToBeDestroyed = true;
+                    break;
+                
+                case OnEdgeCollision.Stop:
+                    if (isXEscaping)
+                    {
+                        velocity.X = 0;
+                    }
+
+                    if (isYEscaping)
+                    {
+                        velocity.Y = 0;
+                    }
+                    break;
+            }
+        }
+        
+        private void handleTranslations(float timeModifier)
+        {
+            handleScreenEdgeCollisions();
+            trans.translate(velocity * timeModifier);
+        }
         
         public void physicsTick(float timeSinceLastUpdate)
         {
             float timeModifier = timeSinceLastUpdate / 20;
 
             updateVelocities(timeModifier);
+            collisionCooldown -= timeSinceLastUpdate;
+            if(collisionCooldown <= 0)
+                collisionCooldown = 0;
             trans.rotate(angularVelocity * timeModifier);
-			trans.translate(this.velocity * timeModifier);
+			handleTranslations(timeModifier);
 
             this.force = Vector2.Zero;
             this.torque = 0;
@@ -395,7 +475,7 @@ namespace Shard
 
             foreach (Collider c in myColliders)
             {
-                d = c.checkCollision(other);
+                d = c.checkCollision(other).Item1;
 
                 if (d != null)
                 {
@@ -414,7 +494,7 @@ namespace Shard
 //            Debug.Log("Checking collision with " + other);
             foreach (Collider c in myColliders)
             {
-                d = c.checkCollision(other);
+                d = c.checkCollision(other).Item1;
 
                 if (d != null)
                 {

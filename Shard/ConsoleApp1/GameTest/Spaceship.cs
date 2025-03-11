@@ -9,6 +9,12 @@ namespace GameTest {
 
         bool isPlayer1Controlled, isPlayer2Controlled;
 
+        private static float fireDelay = 0.05f;
+        private float fireCooldown = 0;
+        private float thrust = 0.6f;
+        private float backThrust = 0.2f;
+        private float torque = 1.2f;
+
         
         // Constructor to determine player control
         public Spaceship(bool isPlayer1) {
@@ -17,11 +23,8 @@ namespace GameTest {
         }
         
         public override void initialize() {
-            Transform.X = 500.0f;
-            Transform.Y = 500.0f;
-            
-            //Set default sprite
-            Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceship.png");
+            // this.Transform.X = 500.0f;
+            // this.Transform.Y = 500.0f;
 
             Bootstrap.getInput().addListener(this);
             
@@ -32,12 +35,13 @@ namespace GameTest {
 
             MyBody.Mass = 1;
             MyBody.MaxForce = 10;
-            MyBody.AngularDrag = 0.1f;
+            MyBody.AngularDrag = 0.2f;
             MyBody.Drag = 0.05f;
             MyBody.StopOnCollision = false;
             MyBody.ReflectOnCollision = false;
             MyBody.ImpartForce = true;
             MyBody.RepelBodies = true;
+            MyBody.EdgeCollision = OnEdgeCollision.Stop;
 
 
             //           MyBody.PassThrough = true;
@@ -52,6 +56,12 @@ namespace GameTest {
         }
 
         public void fireBullet() {
+            if (fireCooldown < fireDelay)
+            {
+                return;
+            }
+            fireCooldown = 0;
+            
             Bullet b = new Bullet();
 
             b.setupBullet(this, this.Transform.Centre.X, this.Transform.Centre.Y);
@@ -93,21 +103,22 @@ namespace GameTest {
 
         public override void physicsUpdate() {
             if (isPlayer1Controlled) {
-                if (turnLeft) MyBody.addTorque(-0.6f);
-                if (turnRight) MyBody.addTorque(0.6f);
-                if (up) MyBody.addForce(this.Transform.Forward, 0.5f);
-                if (down) MyBody.addForce(this.Transform.Forward, -0.2f);
+                if (turnLeft) MyBody.addTorque(-torque);
+                if (turnRight) MyBody.addTorque(torque);
+                if (up) MyBody.addForce(this.Transform.Forward, thrust);
+                if (down) MyBody.addForce(this.Transform.Forward, -backThrust);
             }
             else if (isPlayer2Controlled) {
-                if (turnLeft2) MyBody.addTorque(-0.6f);
-                if (turnRight2) MyBody.addTorque(0.6f);
-                if (up2) MyBody.addForce(this.Transform.Forward, 0.5f);
-                if (down2) MyBody.addForce(this.Transform.Forward, -0.2f);
+                if (turnLeft2) MyBody.addTorque(-torque);
+                if (turnRight2) MyBody.addTorque(torque);
+                if (up2) MyBody.addForce(this.Transform.Forward, thrust);
+                if (down2) MyBody.addForce(this.Transform.Forward, -backThrust);
             }
         }
 
         public override void update() {
             Bootstrap.getDisplay().addToDraw(this);
+            fireCooldown += (float)Bootstrap.getDeltaTime();
         }
 
         public void onCollisionEnter(PhysicsBody x) {
