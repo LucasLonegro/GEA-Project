@@ -8,6 +8,7 @@ namespace Shard {
     class GameTest : Game , InputListener {
         GameObject background;
         List<GameObject> asteroids;
+        private Asteroid theBall;
 
         public override void update() {
             Bootstrap.getDisplay()
@@ -27,7 +28,7 @@ namespace Shard {
 
             // 🎮 Player 2 Ship (Controlled with Arrow Keys)
             GameObject playerTwo = new Spaceship(false);
-            playerTwo.Transform.X = Bootstrap.getDisplay().getWidth() - 200;;  // Different starting position
+            playerTwo.Transform.X = Bootstrap.getDisplay().getWidth() - 200;  // Different starting position
             playerTwo.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
 
             GameObject asteroid;
@@ -39,14 +40,31 @@ namespace Shard {
             background.Transform.Y = 0;
         }
 
+        public void createGoalposts()
+        {
+            Goalpost goal1 = new Goalpost(true);
+            goal1.Transform.X = 50.0f;
+            goal1.Transform.Y = 300.0f;
+            Goalpost goal2 = new Goalpost(false);
+            goal2.Transform.X = 950.0f;
+            goal2.Transform.Y = 300.0f;
+        }
+
         public override void initialize() {
             Bootstrap.getInput().addListener(this);
             createShips();
-
+            createGoalposts();
+            asteroids = new List<GameObject>();
+            
+            theBall = new Asteroid();
+            theBall.Transform.X = Bootstrap.getDisplay().getWidth() / 2;
+            theBall.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
+            // asteroids.Add(theBall);
             
             Bootstrap.getSound().playBackgroundMusic("retroBackground.wav");
 
             asteroids = new List<GameObject>();
+
         }
 
         public void handleInput(InputEvent inp, string eventType) {
