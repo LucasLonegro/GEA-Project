@@ -11,6 +11,9 @@ namespace GameTest {
 
         private static float fireDelay = 0.05f;
         private float fireCooldown = 0;
+        private float thrust = 0.6f;
+        private float backThrust = 0.2f;
+        private float torque = 1.2f;
 
         
         // Constructor to determine player control
@@ -54,7 +57,7 @@ namespace GameTest {
 
             MyBody.Mass = 1;
             MyBody.MaxForce = 10;
-            MyBody.AngularDrag = 0.1f;
+            MyBody.AngularDrag = 0.2f;
             MyBody.Drag = 0.05f;
             MyBody.StopOnCollision = false;
             MyBody.ReflectOnCollision = false;
@@ -138,16 +141,16 @@ namespace GameTest {
 
         public override void physicsUpdate() {
             if (isPlayer1Controlled) {
-                if (turnLeft) MyBody.addTorque(-0.6f);
-                if (turnRight) MyBody.addTorque(0.6f);
-                if (up) MyBody.addForce(this.Transform.Forward, 0.5f);
-                if (down) MyBody.addForce(this.Transform.Forward, -0.2f);
+                if (turnLeft) MyBody.addTorque(-torque);
+                if (turnRight) MyBody.addTorque(torque);
+                if (up) MyBody.addForce(this.Transform.Forward, thrust);
+                if (down) MyBody.addForce(this.Transform.Forward, -backThrust);
             }
             else if (isPlayer2Controlled) {
-                if (turnLeft2) MyBody.addTorque(-0.6f);
-                if (turnRight2) MyBody.addTorque(0.6f);
-                if (up2) MyBody.addForce(this.Transform.Forward, 0.5f);
-                if (down2) MyBody.addForce(this.Transform.Forward, -0.2f);
+                if (turnLeft2) MyBody.addTorque(-torque);
+                if (turnRight2) MyBody.addTorque(torque);
+                if (up2) MyBody.addForce(this.Transform.Forward, thrust);
+                if (down2) MyBody.addForce(this.Transform.Forward, -backThrust);
             }
         }
 

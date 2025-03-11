@@ -27,7 +27,7 @@ namespace GameTest
             //            MyBody.addCircleCollider((int)x, (int)y, 5);
 
             MyBody.Mass = 0.1f;
-            MyBody.MaxForce = 50;
+            MyBody.MaxForce = 10.0f;
             MyBody.Velocity = or.Transform.Forward * 10.0f;
             MyBody.Drag = 0.0f;
 
