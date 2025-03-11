@@ -1,21 +1,38 @@
 ﻿/*
-*
-*   Any game object interested in listening for input events will need to register itself 
-*       with this manager.   It handles the informing of all listener objects when an 
-*       event is raised.
-*   @author Michael Heron
-*   @version 1.0
-*   
-*/
+ *
+ *   Any game object interested in listening for input events will need to register itself
+ *       with this manager.   It handles the informing of all listener objects when an
+ *       event is raised.
+ *   @author Michael Heron
+ *   @version 1.0
+ *
+ */
 
 using System.Collections.Generic;
+using System.Runtime.InteropServices.JavaScript;
 
 namespace Shard
 {
+    internal class KeyMapping
+    {
+        private Dictionary<string, string> map = new Dictionary<string, string>();
+
+        public void setMapping(string key, string value)
+        {
+            map.Add(key, value);
+        }
+
+        public string getMapping(string key)
+        {
+            if (map.TryGetValue(key, out string value) && value != null)
+                return value;
+            return key;
+        }
+    }
 
     abstract class InputSystem
     {
-        private List<InputListener> myListeners;
+        private Dictionary<InputListener, KeyMapping> myListeners;
 
         public virtual void initialize()
         {
@@ -23,15 +40,20 @@ namespace Shard
 
         public InputSystem()
         {
-            myListeners = new List<InputListener>();
+            myListeners = new Dictionary<InputListener, KeyMapping>();
         }
 
         public void addListener(InputListener il)
         {
-            if (myListeners.Contains(il) == false)
+            if (myListeners.ContainsKey(il) == false)
             {
-                myListeners.Add(il);
+                myListeners.Add(il, new KeyMapping());
             }
+        }
+
+        public void setMapping(InputListener il, string eventTypeFrom, string eventTypeTo)
+        {
+            myListeners[il].setMapping(eventTypeFrom, eventTypeTo);
         }
 
         public void removeListener(InputListener il)
@@ -41,19 +63,12 @@ namespace Shard
 
         public void informListeners(InputEvent ie, string eventType)
         {
-            InputListener il;
-            for (int i = 0; i < myListeners.Count; i++)
+            foreach (var il in myListeners)
             {
-                il = myListeners[i];
-
-                if (il == null)
-                {
-                    continue;
-                }
-
-                il.handleInput(ie, eventType);
+                il.Key.handleInput(ie, il.Value.getMapping(eventType));
             }
         }
+
         public abstract void getInput();
     }
 }
