@@ -73,6 +73,7 @@ namespace Shard {
         public void addAnimation(String name, Animator anim) {
             if (animatorDict != null) {
                 animatorDict.Add(name, anim);
+                Bootstrap.getInput().addListener(anim);
             }
         }
         

@@ -21,18 +21,13 @@ namespace Shard {
         }
 
         public void createShips() {
+            
             // 🎮 Player 1 Ship (Controlled as before)
             GameObject playerOne = new Spaceship(true);
             playerOne.Transform.X = 200;
             playerOne.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
             playerOne.Transform.SpritePath =
                 Bootstrap.getAssetManager().getAssetPath("spaceshipA.png");
-            // playerOne.setAnimationEnabled();
-            // playerOne.Transform.addAnimation("go", [
-            //     Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
-            //     Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
-            //     Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
-            // ], "KeyDown", (int) SDL.SDL_Scancode.SDL_SCANCODE_W);
 
             // 🎮 Player 2 Ship (Controlled with Arrow Keys)
             GameObject playerTwo = new Spaceship(false);
@@ -40,10 +35,15 @@ namespace Shard {
             playerTwo.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
             playerTwo.Transform.SpritePath =
                 Bootstrap.getAssetManager().getAssetPath("spaceshipB.png");
-            // playerTwo.Transform.addAnimation("go", [
-            //     Bootstrap.getAssetManager().getAssetPath("spaceshipA.png"),
-            //     Bootstrap.getAssetManager().getAssetPath("spaceshipB.png")
-            // ], "KeyDown", (int) SDL.SDL_Scancode.SDL_SCANCODE_W, 30);
+            
+            Animator anim = new Animator([
+                Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
+                Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
+                Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
+            ], "KeyDown", (int)SDL.SDL_Scancode.SDL_SCANCODE_W, 30);
+            
+            playerTwo.addAnimation("go", anim);
+            playerOne.addAnimation("go", anim);
 
             GameObject asteroid;
             

@@ -64,15 +64,6 @@ namespace GameTest
             InputSystem il = Bootstrap.getInput();
             il.addListener(this);
 
-            Animator anim = new Animator([
-                Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
-                Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
-                Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
-            ], "KeyDown", (int)SDL.SDL_Scancode.SDL_SCANCODE_W, 30);
-            addAnimation("go", anim);
-            
-            il.addListener(anim);
-
             up = down = turnLeft = turnRight = false;
 
             setPhysicsEnabled();

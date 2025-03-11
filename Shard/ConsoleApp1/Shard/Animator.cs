@@ -46,9 +46,10 @@ public class Animator : InputListener {
     }
 
     public void handleInput(InputEvent inp, string eventType) {
+        Debug.Log("[LISA] INP: " + inp.Classification + " EVENTTYPE: " + eventType);
         enabled = false;
         if (eventType == triggerType) {
-            if (eventType == "MouseDown" || eventType == "MouseUp") { //In case of mouse event
+            if (eventType == "MouseDown" || eventType == "MouseUp" || eventType == "MouseMovement") { //In case of mouse event
                 if (inp.Button == trigger) {
                     Enabled = true;
                 }
