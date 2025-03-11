@@ -1,11 +1,14 @@
-﻿using SDL2;
+﻿using System;
+using System.Collections.Generic;
+using SDL2;
 using Shard;
 using System.Drawing;
 
-namespace GameTest {
-    class Spaceship : GameObject, InputListener, CollisionHandler {
+namespace GameTest
+{
+    class Spaceship : GameObject, InputListener, CollisionHandler
+    {
         bool up, down, turnLeft, turnRight;
-        bool up2, down2, turnLeft2, turnRight2;
 
         bool isPlayer1Controlled, isPlayer2Controlled;
 
@@ -15,43 +18,64 @@ namespace GameTest {
         private float backThrust = 0.2f;
         private float torque = 1.2f;
 
-        
+
         // Constructor to determine player control
-        public Spaceship(bool isPlayer1) {
+        public Spaceship(bool isPlayer1)
+        {
             isPlayer1Controlled = isPlayer1;
             isPlayer2Controlled = !isPlayer1;
 
             // Assign animations based on which player this spaceship belongs to
-            if (isPlayer1Controlled) {
+            if (isPlayer1Controlled)
+            {
                 Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceshipA.png");
-            } else{
+            }
+            else
+            {
                 Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceshipB.png");
             }
-
+            
+            InputSystem il = Bootstrap.getInput();
+            
+            if (!isPlayer1Controlled)
+            {
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_W, 0);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_S, 0);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_D, 0);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_A, 0);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_SPACE, 0);
+                
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_UP, (int)SDL.SDL_Scancode.SDL_SCANCODE_W);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_DOWN, (int)SDL.SDL_Scancode.SDL_SCANCODE_S);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_RIGHT, (int)SDL.SDL_Scancode.SDL_SCANCODE_D);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_LEFT, (int)SDL.SDL_Scancode.SDL_SCANCODE_A);
+                il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_RCTRL, (int)SDL.SDL_Scancode.SDL_SCANCODE_SPACE);
+            }
         }
-        
-        public override void initialize() {
+
+        public override void initialize()
+        {
             // this.Transform.X = 500.0f;
             // this.Transform.Y = 500.0f;
 
             //Animation test
             setAnimationEnabled();
 
-            
+
             Transform.addAnimation("go", [
                 Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
                 Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
                 Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
             ], 30);
-            
+
             Transform.addAnimation("nogo", [
                 Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
             ]);
 
-            Bootstrap.getInput().addListener(this);
-            
+            InputSystem il = Bootstrap.getInput();
+            il.addListener(this);
+
             up = down = turnLeft = turnRight = false;
-            up2 = down2 = turnLeft2 = turnRight2 = false;
 
             setPhysicsEnabled();
 
@@ -77,13 +101,15 @@ namespace GameTest {
             addTag("Spaceship");
         }
 
-        public void fireBullet() {
+        public void fireBullet()
+        {
             if (fireCooldown < fireDelay)
             {
                 return;
             }
+
             fireCooldown = 0;
-            
+
             Bullet b = new Bullet();
 
             b.setupBullet(this, this.Transform.Centre.X, this.Transform.Centre.Y);
@@ -93,87 +119,88 @@ namespace GameTest {
             Bootstrap.getSound().playSound("fire.wav");
         }
 
-        public void handleInput(InputEvent inp, string eventType) {
-            if (eventType == "KeyDown") {
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) {
+        public void handleInput(InputEvent inp, string eventType)
+        {
+            Console.WriteLine("I got "+inp.Key);
+            if (eventType == "KeyDown")
+            {
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W)
+                {
                     up = true;
-                    if (isPlayer1Controlled) {
-                        Transform.enableAnimation("go"); 
+                    if (isPlayer1Controlled)
+                    {
+                        Transform.enableAnimation("go");
                     }
                 }
 
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) {
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S)
+                {
                     down = true;
-                    if (isPlayer1Controlled) {
+                    if (isPlayer1Controlled)
+                    {
                         Transform.enableAnimation("nogo");
                     }
                 }
 
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D) turnRight = true;
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_A) turnLeft = true;
-                
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_UP) up2 = true;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_DOWN) down2 = true;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_RIGHT) turnRight2 = true;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_LEFT) turnLeft2 = true;
+
             }
-            else if (eventType == "KeyUp") {
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) {
+            else if (eventType == "KeyUp")
+            {
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W)
+                {
                     up = false;
                     Transform.disableAnimation();
                 }
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) {
+
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S)
+                {
                     down = false;
                     Transform.disableAnimation();
                 }
+
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D) turnRight = false;
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_A) turnLeft = false;
-                
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_UP) up2 = false;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_DOWN) down2 = false;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_RIGHT) turnRight2 = false;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_LEFT) turnLeft2 = false;
 
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_SPACE && isPlayer1Controlled) fireBullet();
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_RCTRL && isPlayer2Controlled) fireBullet();
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_SPACE) fireBullet();
             }
         }
 
-        public override void physicsUpdate() {
-            if (isPlayer1Controlled) {
-                if (turnLeft) MyBody.addTorque(-torque);
-                if (turnRight) MyBody.addTorque(torque);
-                if (up) MyBody.addForce(this.Transform.Forward, thrust);
-                if (down) MyBody.addForce(this.Transform.Forward, -backThrust);
-            }
-            else if (isPlayer2Controlled) {
-                if (turnLeft2) MyBody.addTorque(-torque);
-                if (turnRight2) MyBody.addTorque(torque);
-                if (up2) MyBody.addForce(this.Transform.Forward, thrust);
-                if (down2) MyBody.addForce(this.Transform.Forward, -backThrust);
-            }
+        public override void physicsUpdate()
+        {
+            if (turnLeft) MyBody.addTorque(-torque);
+            if (turnRight) MyBody.addTorque(torque);
+            if (up) MyBody.addForce(this.Transform.Forward, thrust);
+            if (down) MyBody.addForce(this.Transform.Forward, -backThrust);
         }
 
-        public override void update() {
+        public override void update()
+        {
             Bootstrap.getDisplay().addToDraw(this);
             fireCooldown += (float)Bootstrap.getDeltaTime();
         }
 
-        public void onCollisionEnter(PhysicsBody x) {
-            if (x.Parent.checkTag("Bullet") == false) {
+        public void onCollisionEnter(PhysicsBody x)
+        {
+            if (x.Parent.checkTag("Bullet") == false)
+            {
                 MyBody.DebugColor = Color.Red;
             }
         }
 
-        public void onCollisionExit(PhysicsBody x) {
+        public void onCollisionExit(PhysicsBody x)
+        {
             MyBody.DebugColor = Color.Green;
         }
 
-        public void onCollisionStay(PhysicsBody x) {
+        public void onCollisionStay(PhysicsBody x)
+        {
             MyBody.DebugColor = Color.Blue;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return "Spaceship: [" + Transform.X + ", " + Transform.Y + ", " + Transform.Wid + ", " +
                    Transform.Ht + "]";
         }

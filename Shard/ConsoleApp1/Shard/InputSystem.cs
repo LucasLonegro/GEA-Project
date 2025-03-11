@@ -8,31 +8,38 @@
  *
  */
 
+using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.JavaScript;
 
 namespace Shard
 {
     internal class KeyMapping
     {
-        private Dictionary<string, string> map = new Dictionary<string, string>();
+        private readonly Dictionary<int, int> map = new();
 
-        public void setMapping(string key, string value)
+        public void setMapping(int key, int value)
         {
             map.Add(key, value);
         }
 
-        public string getMapping(string key)
+        public InputEvent getMapping(InputEvent key)
         {
-            if (map.TryGetValue(key, out string value) && value != null)
-                return value;
-            return key;
+            if (!map.ContainsKey(key.Key))
+                return key;
+            InputEvent mappedEvent = key.copyOf();
+            mappedEvent.Key = map[key.Key];
+            return mappedEvent;
+        }
+
+        public override string ToString()
+        {
+            return map.ToString();
         }
     }
 
     abstract class InputSystem
     {
-        private Dictionary<InputListener, KeyMapping> myListeners;
+        private readonly Dictionary<InputListener, KeyMapping> myListeners;
 
         public virtual void initialize()
         {
@@ -51,7 +58,7 @@ namespace Shard
             }
         }
 
-        public void setMapping(InputListener il, string eventTypeFrom, string eventTypeTo)
+        public void setMapping(InputListener il, int eventTypeFrom, int eventTypeTo)
         {
             myListeners[il].setMapping(eventTypeFrom, eventTypeTo);
         }
@@ -65,7 +72,9 @@ namespace Shard
         {
             foreach (var il in myListeners)
             {
-                il.Key.handleInput(ie, il.Value.getMapping(eventType));
+                InputEvent hold = il.Value.getMapping(ie);
+                Console.WriteLine(hold.Key + " vs " + ie.Key);
+                il.Key.handleInput(hold, eventType);
             }
         }
 
