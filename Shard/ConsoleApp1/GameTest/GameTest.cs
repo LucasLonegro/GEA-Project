@@ -27,12 +27,12 @@ namespace Shard {
             playerOne.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
             playerOne.Transform.SpritePath =
                 Bootstrap.getAssetManager().getAssetPath("spaceshipA.png");
-            playerOne.setAnimationEnabled();
-            playerOne.Transform.addAnimation("go", [
-                Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
-                Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
-                Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
-            ], "KeyDown", (int) SDL.SDL_Scancode.SDL_SCANCODE_W);
+            // playerOne.setAnimationEnabled();
+            // playerOne.Transform.addAnimation("go", [
+            //     Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
+            //     Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
+            //     Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
+            // ], "KeyDown", (int) SDL.SDL_Scancode.SDL_SCANCODE_W);
 
             // 🎮 Player 2 Ship (Controlled with Arrow Keys)
             GameObject playerTwo = new Spaceship(false);
@@ -40,10 +40,13 @@ namespace Shard {
             playerTwo.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
             playerTwo.Transform.SpritePath =
                 Bootstrap.getAssetManager().getAssetPath("spaceshipB.png");
+            // playerTwo.Transform.addAnimation("go", [
+            //     Bootstrap.getAssetManager().getAssetPath("spaceshipA.png"),
+            //     Bootstrap.getAssetManager().getAssetPath("spaceshipB.png")
+            // ], "KeyDown", (int) SDL.SDL_Scancode.SDL_SCANCODE_W, 30);
 
             GameObject asteroid;
-
-
+            
             background = new GameObject();
             background.Transform.SpritePath = getAssetManager().getAssetPath("background2.jpg");
             background.Transform.X = 0;

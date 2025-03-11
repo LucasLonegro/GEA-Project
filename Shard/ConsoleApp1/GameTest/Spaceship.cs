@@ -61,19 +61,17 @@ namespace GameTest
             //Animation test
             setAnimationEnabled();
 
+            InputSystem il = Bootstrap.getInput();
+            il.addListener(this);
 
-            Transform.addAnimation("go", [
+            Animator anim = new Animator([
                 Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
                 Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
                 Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
-            ], 30);
-
-            Transform.addAnimation("nogo", [
-                Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
-            ]);
-
-            InputSystem il = Bootstrap.getInput();
-            il.addListener(this);
+            ], "KeyDown", (int)SDL.SDL_Scancode.SDL_SCANCODE_W, 30);
+            addAnimation("go", anim);
+            
+            il.addListener(anim);
 
             up = down = turnLeft = turnRight = false;
 
@@ -121,26 +119,10 @@ namespace GameTest
 
         public void handleInput(InputEvent inp, string eventType)
         {
-            Console.WriteLine("I got "+inp.Key);
             if (eventType == "KeyDown")
             {
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W)
-                {
-                    up = true;
-                    if (isPlayer1Controlled)
-                    {
-                        Transform.enableAnimation("go");
-                    }
-                }
-
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S)
-                {
-                    down = true;
-                    if (isPlayer1Controlled)
-                    {
-                        Transform.enableAnimation("nogo");
-                    }
-                }
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) up = true;
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) down = true;
 
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D) turnRight = true;
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_A) turnLeft = true;
@@ -148,17 +130,8 @@ namespace GameTest
             }
             else if (eventType == "KeyUp")
             {
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W)
-                {
-                    up = false;
-                    Transform.disableAnimation();
-                }
-
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S)
-                {
-                    down = false;
-                    Transform.disableAnimation();
-                }
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) up = false;
+                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) down = false;
 
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D) turnRight = false;
                 if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_A) turnLeft = false;

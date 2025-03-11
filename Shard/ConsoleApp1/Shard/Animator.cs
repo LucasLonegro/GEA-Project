@@ -46,6 +46,7 @@ public class Animator : InputListener {
     }
 
     public void handleInput(InputEvent inp, string eventType) {
+        enabled = false;
         if (eventType == triggerType) {
             if (eventType == "MouseDown" || eventType == "MouseUp") { //In case of mouse event
                 if (inp.Button == trigger) {
@@ -58,7 +59,5 @@ public class Animator : InputListener {
                 }
             }
         }
-
-        Enabled = false;
     }
 }
