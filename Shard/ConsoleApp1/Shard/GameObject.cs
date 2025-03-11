@@ -61,15 +61,8 @@ namespace Shard {
         }
         
         /**
-        * Creates an animator with spritepaths for a specific animation
-        */
-        public void addAnimation(String name, List<string> spritePathList, string triggerType, int trigger) {
-            if (animatorDict != null) {
-                Animator anim = new Animator(spritePathList, triggerType, trigger, 0);
-                animatorDict.Add(name, anim);
-            }
-        }
-
+         * Method that adds pre-existing animator to the dict
+         */
         public void addAnimation(String name, Animator anim) {
             if (animatorDict != null) {
                 animatorDict.Add(name, anim);
@@ -78,47 +71,13 @@ namespace Shard {
         }
         
         /**
-         * Overloaded method. Can add the framedelay when creating animation
+         * Method that creates the animator and adds it in one fell swoop
          */
         public void addAnimation(String name, List<string> spritePathList, string triggerType, int trigger, int frameDelay) {
             if (animatorDict != null) {
                 Animator anim = new Animator(spritePathList, triggerType, trigger, frameDelay);
                 animatorDict.Add(name, anim);
-            }
-        }
-
-        public void setAnimationFrameDelay(String name, int frameDelay) {
-            if (animatorDict != null) {
-                Animator anim = animatorDict[name]; 
-                anim.FrameDelay = frameDelay;
-            }
-        }
-        
-        /**
-        * Enables a specific animation using its name
-        */
-        public void enableAnimation(string name) {
-            //If there is at least 1 animation present...
-            if (animatorDict != null) { 
-                foreach (KeyValuePair<string, Animator> elem in animatorDict) {
-                    elem.Value.Enabled = false; //Set all to disabled
-                    
-                    //EXCEPT the animation we want to enable
-                    if (elem.Key == name) { 
-                        elem.Value.Enabled = true;
-                    }
-                }
-            }
-        }
-
-        /**
-         * Disables all animations, so the spritepath will go back to default
-         */
-        public void disableAnimation() {
-            if (animatorDict != null) { //If there is at least 1 animation present
-                foreach (KeyValuePair<string, Animator> elem in animatorDict) {
-                    elem.Value.Enabled = false; //Set all to disabled
-                }
+                Bootstrap.getInput().addListener(anim);
             }
         }
 

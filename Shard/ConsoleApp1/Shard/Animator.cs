@@ -8,20 +8,19 @@ public class Animator : InputListener {
     private bool enabled;
     private int frameDelay;
     private int ctr;
-    private string triggerType; //The event that will enable the animation
+    private string triggerEvent; //The event that will enable the animation
     private int trigger; //A trigger can either be a key (cast SDL_Scancode to int) or a button
     
-    public Animator(List<string> spritePathList, string triggerType, int trigger, int frameDelay) {
+    public Animator(List<string> spritePathList, string triggerEvent, int trigger, int frameDelay) {
         this.spritePathList = spritePathList;
         currentSpritePath = spritePathList[0];
-        this.triggerType = triggerType;
+        this.triggerEvent = triggerEvent;
         this.trigger = trigger;
         this.frameDelay = frameDelay;
     }
     
     public bool Enabled {
         get => enabled;
-        set => enabled = value;
     }
 
     public int FrameDelay {
@@ -46,17 +45,17 @@ public class Animator : InputListener {
     }
 
     public void handleInput(InputEvent inp, string eventType) {
-        Debug.Log("[LISA] INP: " + inp.Classification + " EVENTTYPE: " + eventType);
         enabled = false;
-        if (eventType == triggerType) {
+        
+        if (eventType == triggerEvent) {
             if (eventType == "MouseDown" || eventType == "MouseUp" || eventType == "MouseMovement") { //In case of mouse event
                 if (inp.Button == trigger) {
-                    Enabled = true;
+                    enabled = true;
                 }
             }
             else if (eventType == "KeyDown" || eventType == "KeyUp") { //In case of key event
                 if (inp.Key == trigger) {
-                    Enabled = true;
+                    enabled = true;
                 }
             }
         }

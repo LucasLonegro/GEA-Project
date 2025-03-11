@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Shard
 {
@@ -70,10 +71,9 @@ namespace Shard
 
         public void informListeners(InputEvent ie, string eventType)
         {
-            foreach (var il in myListeners)
+            foreach (var il in myListeners.ToList())
             {
                 InputEvent hold = il.Value.getMapping(ie);
-                Console.WriteLine(hold.Key + " vs " + ie.Key);
                 il.Key.handleInput(hold, eventType);
             }
         }

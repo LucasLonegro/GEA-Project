@@ -36,14 +36,19 @@ namespace Shard {
             playerTwo.Transform.SpritePath =
                 Bootstrap.getAssetManager().getAssetPath("spaceshipB.png");
             
-            Animator anim = new Animator([
+            //Adding the animations
+            Animator goAnimation = new Animator([
                 Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
                 Bootstrap.getAssetManager().getAssetPath("spaceship2.png"),
                 Bootstrap.getAssetManager().getAssetPath("spaceship3.png")
             ], "KeyDown", (int)SDL.SDL_Scancode.SDL_SCANCODE_W, 30);
+            Animator goAnimation2 = new Animator([
+                Bootstrap.getAssetManager().getAssetPath("spaceshipA.png"),
+                Bootstrap.getAssetManager().getAssetPath("spaceshipB.png"),
+            ], "KeyDown", (int)SDL.SDL_Scancode.SDL_SCANCODE_UP, 30);
             
-            playerTwo.addAnimation("go", anim);
-            playerOne.addAnimation("go", anim);
+            playerOne.addAnimation("go", goAnimation);
+            playerTwo.addAnimation("go", goAnimation2);
 
             GameObject asteroid;
             
