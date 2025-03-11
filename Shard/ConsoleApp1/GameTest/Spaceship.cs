@@ -5,9 +5,8 @@ using System.Drawing;
 namespace GameTest {
     class Spaceship : GameObject, InputListener, CollisionHandler {
         bool up, down, turnLeft, turnRight;
-        bool up2, down2, turnLeft2, turnRight2;
 
-        bool isPlayer1Controlled, isPlayer2Controlled;
+        private int upKey, downKey, leftKey, rightKey, shootKey;
 
         private static float fireDelay = 0.05f;
         private float fireCooldown = 0;
@@ -15,21 +14,28 @@ namespace GameTest {
         private float backThrust = 0.2f;
         private float torque = 1.2f;
 
-        
+
         // Constructor to determine player control
         public Spaceship(bool isPlayer1) {
-            isPlayer1Controlled = isPlayer1;
-            isPlayer2Controlled = !isPlayer1;
+            if (isPlayer1) {
+                upKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_W;
+                downKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_S;
+                leftKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_A;
+                rightKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_D;
+                shootKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_SPACE;
+            }
+            else {
+                upKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_UP;
+                downKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_DOWN;
+                leftKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_LEFT;
+                rightKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_RIGHT;
+                shootKey = (int)SDL.SDL_Scancode.SDL_SCANCODE_RCTRL;
+            }
         }
-        
+
         public override void initialize() {
-            // this.Transform.X = 500.0f;
-            // this.Transform.Y = 500.0f;
 
             Bootstrap.getInput().addListener(this);
-            
-            up = down = turnLeft = turnRight = false;
-            up2 = down2 = turnLeft2 = turnRight2 = false;
 
             setPhysicsEnabled();
 
@@ -56,12 +62,12 @@ namespace GameTest {
         }
 
         public void fireBullet() {
-            if (fireCooldown < fireDelay)
-            {
+            if (fireCooldown < fireDelay) {
                 return;
             }
+
             fireCooldown = 0;
-            
+
             Bullet b = new Bullet();
 
             b.setupBullet(this, this.Transform.Centre.X, this.Transform.Centre.Y);
@@ -73,47 +79,34 @@ namespace GameTest {
 
         public void handleInput(InputEvent inp, string eventType) {
             if (eventType == "KeyDown") {
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) up = true;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) down = true;
-                
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D) turnRight = true;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_A) turnLeft = true;
-                
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_UP) up2 = true;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_DOWN) down2 = true;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_RIGHT) turnRight2 = true;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_LEFT) turnLeft2 = true;
+                if (inp.Key == upKey) {
+                    up = true;
+                    Transform.enableAnimation("go");
+                }
+                if (inp.Key == downKey) down = true;
+
+                if (inp.Key == rightKey) turnRight = true;
+                if (inp.Key == leftKey) turnLeft = true;
             }
             else if (eventType == "KeyUp") {
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_W) up = false;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_S) down = false;
-                
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_D) turnRight = false;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_A) turnLeft = false;
-                
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_UP) up2 = false;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_DOWN) down2 = false;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_RIGHT) turnRight2 = false;
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_LEFT) turnLeft2 = false;
+                if (inp.Key == upKey) {
+                    up = false;
+                    Transform.disableAnimation();
+                }
+                if (inp.Key == downKey) down = false;
 
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_SPACE && isPlayer1Controlled) fireBullet();
-                if (inp.Key == (int)SDL.SDL_Scancode.SDL_SCANCODE_RCTRL && isPlayer2Controlled) fireBullet();
+                if (inp.Key == rightKey) turnRight = false;
+                if (inp.Key == leftKey) turnLeft = false;
+
+                if (inp.Key == shootKey) fireBullet();
             }
         }
 
         public override void physicsUpdate() {
-            if (isPlayer1Controlled) {
-                if (turnLeft) MyBody.addTorque(-torque);
-                if (turnRight) MyBody.addTorque(torque);
-                if (up) MyBody.addForce(this.Transform.Forward, thrust);
-                if (down) MyBody.addForce(this.Transform.Forward, -backThrust);
-            }
-            else if (isPlayer2Controlled) {
-                if (turnLeft2) MyBody.addTorque(-torque);
-                if (turnRight2) MyBody.addTorque(torque);
-                if (up2) MyBody.addForce(this.Transform.Forward, thrust);
-                if (down2) MyBody.addForce(this.Transform.Forward, -backThrust);
-            }
+            if (turnLeft) MyBody.addTorque(-torque);
+            if (turnRight) MyBody.addTorque(torque);
+            if (up) MyBody.addForce(Transform.Forward, thrust);
+            if (down) MyBody.addForce(Transform.Forward, -backThrust);
         }
 
         public override void update() {

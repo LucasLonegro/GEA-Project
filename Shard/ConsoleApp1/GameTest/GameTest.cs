@@ -25,6 +25,8 @@ namespace Shard {
             GameObject playerOne = new Spaceship(true);
             playerOne.Transform.X = 200;
             playerOne.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
+            playerOne.Transform.SpritePath =
+                Bootstrap.getAssetManager().getAssetPath("spaceshipA.png");
             playerOne.setAnimationEnabled();
             playerOne.Transform.addAnimation("go", [
                 Bootstrap.getAssetManager().getAssetPath("spaceship.png"),
@@ -36,6 +38,8 @@ namespace Shard {
             GameObject playerTwo = new Spaceship(false);
             playerTwo.Transform.X = Bootstrap.getDisplay().getWidth() - 200;  // Different starting position
             playerTwo.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
+            playerTwo.Transform.SpritePath =
+                Bootstrap.getAssetManager().getAssetPath("spaceshipB.png");
 
             GameObject asteroid;
 
