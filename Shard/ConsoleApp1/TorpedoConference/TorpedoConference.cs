@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Numerics;
 using SDL2;
 
 namespace Shard {
-    class GameTest : Game , InputListener {
+    class TorpedoConference : Game , InputListener {
         GameObject background;
         List<GameObject> balls;
+        List<GameObject> spaceships = new List<GameObject>();
         private Ball theBall;
         private Goalpost goal1;
         private Goalpost goal2;
@@ -25,6 +27,27 @@ namespace Shard {
             return 100;
         }
 
+        public void goal(Ball ball)
+        {
+            int width = Bootstrap.getDisplay().getTrueWidth();
+            int height = Bootstrap.getDisplay().getTrueHeight();
+            GameObject playerOne = spaceships[0];
+            GameObject playerTwo = spaceships[1];
+            // 🎮 Player 1 Ship (Controlled as before)
+            playerOne.Transform.X = width / 3;
+            playerOne.Transform.Y = height / 2;
+            playerOne.MyBody.Velocity = new Vector2(0,0);
+
+            // 🎮 Player 2 Ship (Controlled with Arrow Keys)
+            playerTwo.Transform.X = width * 2 / 3;  // Different starting position
+            playerTwo.Transform.Y = height / 2;
+            playerOne.MyBody.Velocity = new Vector2(0,0);
+            
+            ball.Transform.X = width / 2;
+            ball.Transform.Y = height / 2;
+            ball.MyBody.Velocity *= 0;
+        }
+
         public void createShips() {
             
             // 🎮 Player 1 Ship (Controlled as before)
@@ -33,6 +56,7 @@ namespace Shard {
             playerOne.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
             playerOne.Transform.SpritePath =
                 Bootstrap.getAssetManager().getAssetPath("spaceshipA.png");
+            spaceships.Add(playerOne);
 
             // 🎮 Player 2 Ship (Controlled with Arrow Keys)
             GameObject playerTwo = new Spaceship(false);
@@ -40,6 +64,7 @@ namespace Shard {
             playerTwo.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
             playerTwo.Transform.SpritePath =
                 Bootstrap.getAssetManager().getAssetPath("spaceshipB.png");
+            spaceships.Add(playerTwo);
             
             //Adding the animations
             Animator goAnimation = new Animator([
@@ -79,7 +104,7 @@ namespace Shard {
             createShips();
             createGoalposts();
             
-            theBall = new Ball();
+            theBall = new Ball(this);
             theBall.Transform.X = Bootstrap.getDisplay().getWidth() / 2;
             theBall.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
             balls = new List<GameObject>();
@@ -94,7 +119,7 @@ namespace Shard {
                 Console.WriteLine("Pressing button " + inp.Button);
                 
                 if (inp.Button == 1) {
-                    Ball ball = new Ball();
+                    Ball ball = new Ball(this);
                     ball.Transform.X = inp.X;
                     ball.Transform.Y = inp.Y;
                     balls.Add(ball);

@@ -7,6 +7,7 @@ namespace GameTest
     class Ball : GameObject, CollisionHandler, InputListener
     {
         int torqueCounter = 0;
+        private TorpedoConference game;
         public void handleInput(InputEvent inp, string eventType)
         {
 
@@ -46,6 +47,11 @@ namespace GameTest
 
         }
 
+        public Ball(TorpedoConference game)
+        {
+            this.game = game;
+        }
+
 
         public override void physicsUpdate()
         {
@@ -72,9 +78,7 @@ namespace GameTest
         {
             if (x.Parent.checkTag("Goalpost")) //TODO: NOT OOP! DISGUSTING!
             {
-                Console.WriteLine(Bootstrap.getDisplay().getWidth());
-                Transform.X = Bootstrap.getDisplay().getTrueWidth() / 2;
-                Transform.Y = Bootstrap.getDisplay().getTrueHeight() / 2;
+                game.goal(this);
             }
 
         }
