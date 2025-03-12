@@ -1,4 +1,5 @@
-﻿using Shard;
+﻿using System;
+using Shard;
 using System.Numerics;
 
 namespace GameTest
@@ -71,8 +72,9 @@ namespace GameTest
         {
             if (x.Parent.checkTag("Goalpost")) //TODO: NOT OOP! DISGUSTING!
             {
-                Transform.X = Bootstrap.getDisplay().getWidth() / 2;
-                Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
+                Console.WriteLine(Bootstrap.getDisplay().getWidth());
+                Transform.X = Bootstrap.getDisplay().getTrueWidth() / 2;
+                Transform.Y = Bootstrap.getDisplay().getTrueHeight() / 2;
             }
 
         }

@@ -26,14 +26,14 @@ namespace GameTest
 
             //            MyBody.addCircleCollider((int)x, (int)y, 5);
 
-            MyBody.Mass = 0.1f;
+            MyBody.Mass = 0.5f;
             MyBody.MaxForce = 10.0f;
             MyBody.Velocity = or.Transform.Forward * 10.0f;
             MyBody.Drag = 0.0f;
 
             MyBody.PassThrough = false;
             MyBody.ImpartForce = true;
-            MyBody.RepelBodies = true;
+            MyBody.RepelBodies = false;
             MyBody.ReflectOnCollision = false;
             MyBody.EdgeCollision = OnEdgeCollision.MarkForDestruction;
             MyBody.onColliders(c => c.ignoreCollider(or));

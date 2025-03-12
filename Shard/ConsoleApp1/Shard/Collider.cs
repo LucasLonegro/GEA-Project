@@ -45,7 +45,7 @@ namespace Shard
         internal float[] MinAndMaxY { get => minAndMaxY; set => minAndMaxY = value; }
         public bool RotateAtOffset { get => rotateAtOffset; set => rotateAtOffset = value; }
         
-        public abstract Bound? isOutOfBounds(int width, int height);
+        public abstract List<Bound> isOutOfBounds(int width, int height);
 
         public abstract (Vector2?, double?) checkCollision(ColliderRect c);
 

@@ -18,7 +18,7 @@ namespace GameTest {
             MyBody.StopOnCollision = true;
             MyBody.ReflectOnCollision = false;
             MyBody.RepelBodies = false;
-            MyBody.EdgeCollision = OnEdgeCollision.Stop;
+            MyBody.MaxForce = 0.0f;
             
             MyBody.addRectCollider();
 

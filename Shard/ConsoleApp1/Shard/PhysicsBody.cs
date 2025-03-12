@@ -324,31 +324,24 @@ namespace Shard
             }
         }
 
-        private Collider.Bound? anyCollide()
+        private List<Collider.Bound> anyCollide()
         {
             int width = DisplayText.WIDTH;
             int height = DisplayText.HEIGHT;
-            foreach (Collider myCollider in myColliders)
-            {
-                Collider.Bound? bound;
-                if ((bound = myCollider.isOutOfBounds(width, height)).HasValue)
-                {
-                    return bound;
-                }
-            }
-            return null;
+            return myColliders.Aggregate(new List<Collider.Bound>(),
+                (a, b) => a.Union(b.isOutOfBounds(width, height)).ToList());
         }
 
-        private bool isXEscaping(Collider.Bound bound)
+        private bool isXEscaping(List<Collider.Bound> bound)
         {
-            return (bound == Collider.Bound.Left && velocity.X < 0) ||
-                   (bound == Collider.Bound.Right && velocity.X > 0);
+            return (bound.Contains(Collider.Bound.Left) && velocity.X < 0) ||
+                   (bound.Contains(Collider.Bound.Right) && velocity.X > 0);
         }
 
-        private bool isYEscaping(Collider.Bound bound)
+        private bool isYEscaping(List<Collider.Bound> bound)
         {
-            return (bound == Collider.Bound.Bottom && velocity.Y > 0) ||
-                   (bound == Collider.Bound.Top && velocity.Y < 0);
+            return (bound.Contains(Collider.Bound.Bottom) && velocity.Y > 0) ||
+                   (bound.Contains(Collider.Bound.Top) && velocity.Y < 0);
         }
 
         private void handleScreenEdgeCollisions()
@@ -358,12 +351,12 @@ namespace Shard
             if (edgeCollision == OnEdgeCollision.Nothing)
                 return;
             
-            Collider.Bound? bound = anyCollide();
-            if (!bound.HasValue)
+            List<Collider.Bound> bound = anyCollide();
+            if (bound.Count == 0)
                 return;
 
-            bool isXEscaping = this.isXEscaping(bound.Value);
-            bool isYEscaping = this.isYEscaping(bound.Value);
+            bool isXEscaping = this.isXEscaping(bound);
+            bool isYEscaping = this.isYEscaping(bound);
             
             switch (edgeCollision)
             {
