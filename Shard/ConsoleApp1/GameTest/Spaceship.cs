@@ -10,8 +10,6 @@ namespace GameTest
     {
         bool up, down, turnLeft, turnRight;
 
-        bool isPlayer1Controlled, isPlayer2Controlled;
-
         private static float fireDelay = 0.05f;
         private float fireCooldown = 0;
         private float thrust = 0.6f;
@@ -22,22 +20,10 @@ namespace GameTest
         // Constructor to determine player control
         public Spaceship(bool isPlayer1)
         {
-            isPlayer1Controlled = isPlayer1;
-            isPlayer2Controlled = !isPlayer1;
-
-            // Assign animations based on which player this spaceship belongs to
-            if (isPlayer1Controlled)
-            {
-                Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceshipA.png");
-            }
-            else
-            {
-                Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("spaceshipB.png");
-            }
             
             InputSystem il = Bootstrap.getInput();
             
-            if (!isPlayer1Controlled)
+            if (!isPlayer1)
             {
                 il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_W, 0);
                 il.setMapping(this, (int)SDL.SDL_Scancode.SDL_SCANCODE_S, 0);
@@ -55,10 +41,7 @@ namespace GameTest
 
         public override void initialize()
         {
-            // this.Transform.X = 500.0f;
-            // this.Transform.Y = 500.0f;
-
-            //Animation test
+            
             setAnimationEnabled();
 
             InputSystem il = Bootstrap.getInput();
@@ -77,14 +60,7 @@ namespace GameTest
             MyBody.ImpartForce = true;
             MyBody.RepelBodies = true;
             MyBody.EdgeCollision = OnEdgeCollision.Stop;
-
-
-            //           MyBody.PassThrough = true;
-            //            MyBody.addCircleCollider(0, 0, 5);
-            //            MyBody.addCircleCollider(0, 34, 5);
-            //            MyBody.addCircleCollider(60, 18, 5);
-            //     MyBody.addCircleCollider();
-
+            
             MyBody.addRectCollider();
 
             addTag("Spaceship");
@@ -135,8 +111,8 @@ namespace GameTest
         {
             if (turnLeft) MyBody.addTorque(-torque);
             if (turnRight) MyBody.addTorque(torque);
-            if (up) MyBody.addForce(this.Transform.Forward, thrust);
-            if (down) MyBody.addForce(this.Transform.Forward, -backThrust);
+            if (up) MyBody.addForce(Transform.Forward, thrust);
+            if (down) MyBody.addForce(Transform.Forward, -backThrust);
         }
 
         public override void update()
@@ -147,7 +123,7 @@ namespace GameTest
 
         public void onCollisionEnter(PhysicsBody x)
         {
-            if (x.Parent.checkTag("Bullet") == false)
+            if (!x.Parent.checkTag("Bullet"))
             {
                 MyBody.DebugColor = Color.Red;
             }
