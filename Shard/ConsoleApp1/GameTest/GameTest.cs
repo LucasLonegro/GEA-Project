@@ -8,7 +8,7 @@ namespace Shard {
     class GameTest : Game , InputListener {
         GameObject background;
         List<GameObject> asteroids;
-        private Asteroid theBall;
+        private Ball theBall;
 
         public override void update() {
             Bootstrap.getDisplay()
@@ -49,23 +49,24 @@ namespace Shard {
             
             playerOne.addAnimation("go", goAnimation);
             playerTwo.addAnimation("go", goAnimation2);
-
-            GameObject asteroid;
             
-            background = new GameObject();
-            background.Transform.SpritePath = getAssetManager().getAssetPath("background2.jpg");
-            background.Transform.X = 0;
-            background.Transform.Y = 0;
+            // background = new GameObject();
+            // background.Transform.SpritePath = getAssetManager().getAssetPath("background2.jpg");
+            // background.Transform.X = 0;
+            // background.Transform.Y = 0;
         }
 
         public void createGoalposts()
         {
-            Goalpost goal1 = new Goalpost(true);
+            Goalpost goal1 = new Goalpost();
             goal1.Transform.X = 50.0f;
             goal1.Transform.Y = 300.0f;
-            Goalpost goal2 = new Goalpost(false);
-            goal2.Transform.X = 950.0f;
+            goal1.Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("LeftGoalpost.png");
+            
+            Goalpost goal2 = new Goalpost();
+            goal2.Transform.X = 1150.0f;
             goal2.Transform.Y = 300.0f;
+            goal2.Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("RightGoalpost.png");
         }
 
         public override void initialize() {
@@ -74,7 +75,7 @@ namespace Shard {
             createGoalposts();
             asteroids = new List<GameObject>();
             
-            theBall = new Asteroid();
+            theBall = new Ball();
             theBall.Transform.X = Bootstrap.getDisplay().getWidth() / 2;
             theBall.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
             // asteroids.Add(theBall);
@@ -90,10 +91,10 @@ namespace Shard {
                 Console.WriteLine("Pressing button " + inp.Button);
                 
                 if (inp.Button == 1) {
-                    Asteroid asteroid = new Asteroid();
-                    asteroid.Transform.X = inp.X;
-                    asteroid.Transform.Y = inp.Y;
-                    asteroids.Add(asteroid);
+                    Ball ball = new Ball();
+                    ball.Transform.X = inp.X;
+                    ball.Transform.Y = inp.Y;
+                    asteroids.Add(ball);
                 }
 
                 if (inp.Button == 3) {
