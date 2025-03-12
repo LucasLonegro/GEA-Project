@@ -326,8 +326,8 @@ namespace Shard
 
         private Collider.Bound? anyCollide()
         {
-            int width = Bootstrap.getDisplay().getWidth();
-            int height = Bootstrap.getDisplay().getHeight();
+            int width = DisplayText.WIDTH;
+            int height = DisplayText.HEIGHT;
             foreach (Collider myCollider in myColliders)
             {
                 Collider.Bound? bound;
