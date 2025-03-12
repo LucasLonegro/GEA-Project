@@ -80,17 +80,14 @@ namespace Shard {
             createGoalposts();
             
             theBall = new Ball();
-            resetBall();
+            theBall.Transform.X = Bootstrap.getDisplay().getWidth() / 2;
+            theBall.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
             balls = new List<GameObject>();
             balls.Add(theBall);
             
             Bootstrap.getSound().playBackgroundMusic("retroBackground.wav");
         }
-
-        public void resetBall() {
-            theBall.Transform.X = Bootstrap.getDisplay().getWidth() / 2;
-            theBall.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
-        }
+        
 
         public void handleInput(InputEvent inp, string eventType) {
             if (eventType == "MouseDown") {

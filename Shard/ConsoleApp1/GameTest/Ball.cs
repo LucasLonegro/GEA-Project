@@ -69,7 +69,7 @@ namespace GameTest
 
         public void onCollisionEnter(PhysicsBody x)
         {
-            if (x.Parent.checkTag("Goalpost"))
+            if (x.Parent.checkTag("Goalpost")) //TODO: NOT OOP! DISGUSTING!
             {
                 Transform.X = Bootstrap.getDisplay().getWidth() / 2;
                 Transform.Y = Bootstrap.getDisplay().getHeight() / 2;

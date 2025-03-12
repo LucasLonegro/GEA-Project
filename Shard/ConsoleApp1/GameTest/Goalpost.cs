@@ -34,7 +34,7 @@ namespace GameTest {
             MyBody.DebugColor = Color.Red;
             if (x.Parent.checkTag("Ball")) {
                 Debug.Log("SCORE");
-                goalsScored++;
+                goalsScored++; //TODO: this could be cleaner, have the game be a listener for collisions etc etc
             }
         }
 
