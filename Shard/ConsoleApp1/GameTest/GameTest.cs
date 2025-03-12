@@ -7,13 +7,18 @@ using SDL2;
 namespace Shard {
     class GameTest : Game , InputListener {
         GameObject background;
-        List<GameObject> asteroids;
+        List<GameObject> balls;
         private Ball theBall;
+        private Goalpost goal1;
+        private Goalpost goal2;
 
         public override void update() {
             Bootstrap.getDisplay()
-                .showText("FPS: " + Bootstrap.getSecondFPS() + " / " + Bootstrap.getFPS(), 10, 10,
-                    12, 255, 255, 255);
+                .showText("FPS: " + Bootstrap.getSecondFPS() + " / " + Bootstrap.getFPS(), 
+                    10, 10, 30, 255, 255, 255);
+            Bootstrap.getDisplay().showText(
+                goal1.GoalsScored + " / " + goal2.GoalsScored, 
+                1200, 10, 30, 255, 255, 255);
         }
 
         public override int getTargetFrameRate() {
@@ -58,12 +63,12 @@ namespace Shard {
 
         public void createGoalposts()
         {
-            Goalpost goal1 = new Goalpost();
+            goal1 = new Goalpost();
             goal1.Transform.X = 50.0f;
             goal1.Transform.Y = 300.0f;
             goal1.Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("LeftGoalpost.png");
             
-            Goalpost goal2 = new Goalpost();
+            goal2 = new Goalpost();
             goal2.Transform.X = 1150.0f;
             goal2.Transform.Y = 300.0f;
             goal2.Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("RightGoalpost.png");
@@ -73,17 +78,18 @@ namespace Shard {
             Bootstrap.getInput().addListener(this);
             createShips();
             createGoalposts();
-            asteroids = new List<GameObject>();
             
             theBall = new Ball();
-            theBall.Transform.X = Bootstrap.getDisplay().getWidth() / 2;
-            theBall.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
-            // asteroids.Add(theBall);
+            resetBall();
+            balls = new List<GameObject>();
+            balls.Add(theBall);
             
             Bootstrap.getSound().playBackgroundMusic("retroBackground.wav");
+        }
 
-            asteroids = new List<GameObject>();
-
+        public void resetBall() {
+            theBall.Transform.X = Bootstrap.getDisplay().getWidth() / 2;
+            theBall.Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
         }
 
         public void handleInput(InputEvent inp, string eventType) {
@@ -94,15 +100,15 @@ namespace Shard {
                     Ball ball = new Ball();
                     ball.Transform.X = inp.X;
                     ball.Transform.Y = inp.Y;
-                    asteroids.Add(ball);
+                    balls.Add(ball);
                 }
 
                 if (inp.Button == 3) {
-                    foreach (GameObject ast in asteroids) {
+                    foreach (GameObject ast in balls) {
                         ast.ToBeDestroyed = true;
                     }
 
-                    asteroids.Clear();
+                    balls.Clear();
                 }
             }
 

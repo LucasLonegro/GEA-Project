@@ -3,10 +3,11 @@ using Shard;
 
 namespace GameTest {
     class Goalpost : GameObject, CollisionHandler {
-        
-        public Goalpost()
-        {
-   
+
+        private int goalsScored = 0;
+
+        public int GoalsScored {
+           get => goalsScored; 
         }
         
         public override void initialize() {
@@ -33,6 +34,7 @@ namespace GameTest {
             MyBody.DebugColor = Color.Red;
             if (x.Parent.checkTag("Ball")) {
                 Debug.Log("SCORE");
+                goalsScored++;
             }
         }
 

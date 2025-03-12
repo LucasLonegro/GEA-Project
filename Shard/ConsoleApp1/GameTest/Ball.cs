@@ -16,8 +16,6 @@ namespace GameTest
                     torqueCounter += 10;
                 }
             }
-
-
         }
 
         public override void initialize()
@@ -71,13 +69,11 @@ namespace GameTest
 
         public void onCollisionEnter(PhysicsBody x)
         {
-            if (x.Parent.checkTag("Bullet") == true && false)
+            if (x.Parent.checkTag("Goalpost"))
             {
-                ToBeDestroyed = true;
-                Debug.getInstance().log("Boom");
+                Transform.X = Bootstrap.getDisplay().getWidth() / 2;
+                Transform.Y = Bootstrap.getDisplay().getHeight() / 2;
             }
-
-            Debug.getInstance().log("Bang");
 
         }
 
