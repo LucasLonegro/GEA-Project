@@ -9,6 +9,7 @@
 using System;
 using System.Drawing;
 using System.Numerics;
+using System.Collections.Generic;
 
 namespace Shard
 {
@@ -104,6 +105,20 @@ namespace Shard
         public override void recalculate()
         {
             calculateBoundingBox();
+        }
+
+        public override List<Bound> isOutOfBounds(int width, int height)
+        {
+            List<Bound> bounds = new List<Bound>();
+            if (X - Rad < 0)
+                bounds.Add(Bound.Left);
+            else if(X + Rad > width)
+                bounds.Add(Bound.Right);
+            if(Y - Rad < 0)
+                bounds.Add(Bound.Top);
+            else if(Y + Rad > height)
+                bounds.Add(Bound.Bottom);
+            return bounds;
         }
 
         public override (Vector2?, double?) checkCollision(ColliderRect other)

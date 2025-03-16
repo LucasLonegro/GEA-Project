@@ -77,8 +77,7 @@ namespace Shard
             int w;
             int h;
             
-            
-            ret = loadTexture(trans.getSpritePathUpdated());
+            ret = loadTexture(trans.getNextSpritepath());
 
             SDL.SDL_QueryTexture(ret, out format, out access, out w, out h);
             trans.Ht = h;

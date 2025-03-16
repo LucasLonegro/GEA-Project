@@ -9,6 +9,7 @@
 using System;
 using System.Drawing;
 using System.Numerics;
+using System.Collections.Generic;
 
 namespace Shard
 {
@@ -118,6 +119,20 @@ namespace Shard
             calculateBoundingBox();
         }
 
+        public override List<Bound> isOutOfBounds(int width, int height)
+        {
+            List<Bound> bounds = new List<Bound>();
+            if (Left < 0)
+                bounds.Add(Bound.Left);
+            else if(Right > width)
+                bounds.Add(Bound.Right);
+            if(Top < 0)
+                bounds.Add(Bound.Top);
+            else if(Bottom > height)
+                bounds.Add(Bound.Bottom);
+            return bounds;
+        }
+        
         public ColliderRect calculateMinkowskiDifference(ColliderRect other)
         {
             float left, right, top, bottom, width, height;

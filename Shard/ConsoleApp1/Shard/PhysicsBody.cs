@@ -210,6 +210,7 @@ namespace Shard
         public void stopForces()
         {
             force = Vector2.Zero;
+            velocity = Vector2.Zero;
         }
 
         public void reflectForces(Vector2 impulse)
@@ -323,6 +324,78 @@ namespace Shard
                 angularVelocity -= instantAngularDrag * angularVelocity;
             }
         }
+
+        private List<Collider.Bound> anyCollide()
+        {
+            int width = DisplayText.WIDTH;
+            int height = DisplayText.HEIGHT;
+            return myColliders.Aggregate(new List<Collider.Bound>(),
+                (a, b) => a.Union(b.isOutOfBounds(width, height)).ToList());
+        }
+
+        private bool isXEscaping(List<Collider.Bound> bound)
+        {
+            return (bound.Contains(Collider.Bound.Left) && velocity.X < 0) ||
+                   (bound.Contains(Collider.Bound.Right) && velocity.X > 0);
+        }
+
+        private bool isYEscaping(List<Collider.Bound> bound)
+        {
+            return (bound.Contains(Collider.Bound.Bottom) && velocity.Y > 0) ||
+                   (bound.Contains(Collider.Bound.Top) && velocity.Y < 0);
+        }
+
+        private void handleScreenEdgeCollisions()
+        {
+            int width = Bootstrap.getDisplay().getWidth();
+            int height = Bootstrap.getDisplay().getHeight();
+            if (edgeCollision == OnEdgeCollision.Nothing)
+                return;
+            
+            List<Collider.Bound> bound = anyCollide();
+            if (bound.Count == 0)
+                return;
+
+            bool isXEscaping = this.isXEscaping(bound);
+            bool isYEscaping = this.isYEscaping(bound);
+            
+            switch (edgeCollision)
+            {
+                case OnEdgeCollision.Rebound:
+                    if ( isXEscaping)
+                    {
+                        velocity.X = -velocity.X;
+                    }
+                    if (isYEscaping)
+                    {
+                        velocity.Y = -velocity.Y;
+                    }
+                    break;
+                
+                case OnEdgeCollision.MarkForDestruction:
+                    if (isXEscaping || isYEscaping)
+                        parent.ToBeDestroyed = true;
+                    break;
+                
+                case OnEdgeCollision.Stop:
+                    if (isXEscaping)
+                    {
+                        velocity.X = 0;
+                    }
+
+                    if (isYEscaping)
+                    {
+                        velocity.Y = 0;
+                    }
+                    break;
+            }
+        }
+        
+        private void handleTranslations(float timeModifier)
+        {
+            handleScreenEdgeCollisions();
+            trans.translate(velocity * timeModifier);
+        }
         
         public void physicsTick(float timeSinceLastUpdate)
         {
@@ -333,7 +406,7 @@ namespace Shard
             if(collisionCooldown <= 0)
                 collisionCooldown = 0;
             trans.rotate(angularVelocity * timeModifier);
-			trans.translate(this.velocity * timeModifier);
+			handleTranslations(timeModifier);
 
             this.force = Vector2.Zero;
             this.torque = 0;
