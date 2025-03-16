@@ -210,6 +210,7 @@ namespace Shard
         public void stopForces()
         {
             force = Vector2.Zero;
+            velocity = Vector2.Zero;
         }
 
         public void reflectForces(Vector2 impulse)
