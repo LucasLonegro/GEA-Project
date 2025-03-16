@@ -36,6 +36,7 @@ namespace Shard
 {
     class PhysicsBody
     {
+        private const double LowerBound = 0.0001;
         List<Collider> myColliders;
         List<Collider> collisionCandidates;
         GameObject parent;
@@ -45,7 +46,7 @@ namespace Shard
         private float drag;
         private float torque;
         private float angularVelocity;
-        private Vector2 force;
+        private Vector2 acceleration;
         private Vector2 velocity;
         private float mass;
         private double timeInterval;
@@ -196,7 +197,7 @@ namespace Shard
 
         public void reverseForces(float prop)
         {
-            force *= -prop;
+            acceleration *= -prop;
         }
 
         public void impartForces(PhysicsBody other, float massProp)
@@ -209,7 +210,7 @@ namespace Shard
 
         public void stopForces()
         {
-            force = Vector2.Zero;
+            acceleration = Vector2.Zero;
             velocity = Vector2.Zero;
         }
 
@@ -246,7 +247,7 @@ namespace Shard
             }
 
 
-            force *= reflect;
+            acceleration *= reflect;
 
             Debug.Log("Reflect is " + reflect);
 
@@ -265,17 +266,17 @@ namespace Shard
             dir /= Mass;
 
             // Set a lower bound.
-            if (dir.LengthSquared() < 0.0001)
+            if (dir.LengthSquared() < LowerBound)
             {
                 return;
             }
 
-            force += dir;
+            acceleration += dir;
 
             // Set a higher bound.
-            if (force.Length() > MaxForce)
+            if (acceleration.Length() > MaxForce)
             {
-                force = Vector2.Normalize(force) * MaxForce;
+                acceleration = Vector2.Normalize(acceleration) * MaxForce;
             }
         }
 
@@ -288,41 +289,6 @@ namespace Shard
 
             MinAndMaxX = getMinAndMax(true);
             MinAndMaxY = getMinAndMax(false);
-        }
-
-        private void updateVelocities(float timeModifier)
-        {
-            
-            float instantDrag = Drag * timeModifier;
-            float instantAngularDrag = angularDrag * timeModifier;
-            
-            if(force.Length() != 0)
-            {
-                velocity += force * timeModifier;
-            }
-
-            float velocityMagnitude = velocity.Length();
-            
-            if (velocityMagnitude < instantDrag)
-            {
-                velocity = Vector2.Zero;
-            }
-            else if(instantDrag > 0)
-            {
-                velocity -= velocity * instantDrag;
-            }
-            
-
-            if(torque != 0)
-                angularVelocity += torque * timeModifier;
-            if ( Math.Abs(angularVelocity) < instantAngularDrag)
-            {
-                angularVelocity = 0;
-            }
-            else
-            {
-                angularVelocity -= instantAngularDrag * angularVelocity;
-            }
         }
 
         private List<Collider.Bound> anyCollide()
@@ -396,19 +362,60 @@ namespace Shard
             handleScreenEdgeCollisions();
             trans.translate(velocity * timeModifier);
         }
+
+        private void handleRotations(float timeModifier)
+        {
+            trans.rotate(angularVelocity * timeModifier);
+        }
+
+        // https://lpsa.swarthmore.edu/NumInt/NumIntFourth.html
+        // f(v, t) = a_0 - k*v 
+        private float angularVelocityRungeKutta4(float timeModifier)
+        {
+            float k1 = torque  - angularDrag * angularVelocity;
+            float k2 = torque  - angularDrag * (angularVelocity + k1 * timeModifier / 2);
+            float k3 = torque  - angularDrag * (angularVelocity + k2 * timeModifier / 2);
+            float k4 = torque  - angularDrag * (angularVelocity + k3 * timeModifier);
+            return timeModifier *(k1 + 2*k2 + 2*k3 + k4) / 6;
+        }
+
+        // https://lpsa.swarthmore.edu/NumInt/NumIntFourth.html
+        private Vector2 velocityRungeKutta4(float timeModifier)
+        {
+            Console.WriteLine("Drag " + Drag);
+            Console.WriteLine("timeModifier " + timeModifier);
+            float k1X = acceleration.X - Drag * velocity.X;
+            float k2X = acceleration.X - Drag * (velocity.X + k1X * timeModifier / 2);
+            float k3X = acceleration.X - Drag * (velocity.X + k2X * timeModifier / 2);
+            float k4X = acceleration.X - Drag * (velocity.X + k3X * timeModifier);
+            
+            float k1Y = acceleration.Y - Drag * velocity.Y;
+            float k2Y = acceleration.Y - Drag * (velocity.Y + k1Y * timeModifier / 2);
+            float k3Y = acceleration.Y - Drag * (velocity.Y + k2Y * timeModifier / 2);
+            float k4Y = acceleration.Y - Drag * (velocity.Y + k3Y * timeModifier);
+            Console.WriteLine(parent);
+            Console.WriteLine(Velocity);
+            Console.WriteLine(new Vector2(timeModifier *(k1X + 2*k2X + 2*k3X + k4X) / 6, timeModifier *(k1Y + 2*k2Y + 2*k3Y + k4Y) / 6));
+            return new Vector2(timeModifier *(k1X + 2*k2X + 2*k3X + k4X) / 6, timeModifier *(k1Y + 2*k2Y + 2*k3Y + k4Y) / 6);
+        }
+        
+        private void handleVelocityUpdates(float timeModifier)
+        {
+            angularVelocity += angularVelocityRungeKutta4(timeModifier);
+            velocity += velocityRungeKutta4(timeModifier);
+        }
         
         public void physicsTick(float timeSinceLastUpdate)
         {
-            float timeModifier = timeSinceLastUpdate / 20;
-
-            updateVelocities(timeModifier);
+            float timeModifier = timeSinceLastUpdate / 5;
+            handleVelocityUpdates(timeModifier);
+            handleRotations(timeModifier);
+            handleTranslations(timeModifier);
             collisionCooldown -= timeSinceLastUpdate;
             if(collisionCooldown <= 0)
                 collisionCooldown = 0;
-            trans.rotate(angularVelocity * timeModifier);
-			handleTranslations(timeModifier);
 
-            this.force = Vector2.Zero;
+            this.acceleration = Vector2.Zero;
             this.torque = 0;
 
         }

@@ -12,9 +12,9 @@ namespace GameTest
 
         private static float fireDelay = 0.05f;
         private float fireCooldown = 0;
-        private float thrust = 0.6f;
+        private float thrust = 0.16f;
         private float backThrust = 0.2f;
-        private float torque = 1.2f;
+        private float torque = 0.3f;
 
 
         // Constructor to determine player control
