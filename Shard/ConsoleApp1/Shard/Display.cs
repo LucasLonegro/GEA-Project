@@ -74,16 +74,6 @@ namespace Shard
         {
             return _width;
         }
-        
-        public int getTrueHeight()
-        {
-            return DisplayText.HEIGHT;
-        }
-
-        public int getTrueWidth()
-        {
-            return DisplayText.WIDTH;
-        }
 
         public virtual void setSize(int w, int h)
         {

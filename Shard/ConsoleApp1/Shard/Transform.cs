@@ -27,7 +27,7 @@ namespace Shard {
         private string spritePath;
         private Vector2 forward;
         private Vector2 right, centre;
-        // private Dictionary<string, Animator> animatorDict;
+        private Dictionary<string, Animator> animatorDict;
 
         public Vector2 getLastDirection() {
             float dx, dy;
@@ -115,25 +115,85 @@ namespace Shard {
             set => rotz = value;
         }
 
+        public Dictionary<string, Animator> AnimatorDict {
+            get => animatorDict;
+            set => animatorDict = value;
+        }
+
+        /**
+         * Creates an animator with spritepaths for a specific animation
+         */
+        public void addAnimation(String name, List<string> spritePathList) {
+            if (animatorDict != null) {
+                Animator anim = new Animator(spritePathList, 0);
+                animatorDict.Add(name, anim);
+            }
+        }
+        
+        /**
+         * Overloaded method. Can add the framedelay when creating animation
+         */
+        public void addAnimation(String name, List<string> spritePathList, int frameDelay) {
+            if (animatorDict != null) {
+                Animator anim = new Animator(spritePathList, frameDelay);
+                animatorDict.Add(name, anim);
+            }
+        }
+
+        public void setAnimationFrameDelay(String name, int frameDelay) {
+            if (animatorDict != null) {
+                Animator anim = animatorDict[name]; 
+                anim.FrameDelay = frameDelay;
+            }
+        }
+
         public string SpritePath {
             get => spritePath;
             set => spritePath = value;
         }
 
         /**
-         * Method that sets the next spritepath in case one of the animations is enabled
+         * Enables a specific animation using its name
          */
-        public string getNextSpritepath() {
-            if (owner.AnimatorDict != null) {
-                foreach (Animator anim in owner.AnimatorDict.Values) {
+        public void enableAnimation(string name) {
+            //If there is at least 1 animation present...
+            if (animatorDict != null) { 
+                foreach (KeyValuePair<string, Animator> elem in animatorDict) {
+                    elem.Value.Enabled = false; //Set all to disabled
+                    
+                    //EXCEPT the animation we want to enable
+                    if (elem.Key == name) { 
+                        elem.Value.Enabled = true;
+                    }
+                }
+            }
+        }
+
+        /**
+         * Disables all animations, so the spritepath will go back to default
+         */
+        public void disableAnimation() {
+            if (animatorDict != null) { //If there is at least 1 animation present
+                foreach (KeyValuePair<string, Animator> elem in animatorDict) {
+                    elem.Value.Enabled = false; //Set all to disabled
+                }
+            }
+        }
+
+        /**
+         * Method that returns the next spritepath in case one of the animations is enabled
+         */
+        public string getSpritePathUpdated() {
+            if (animatorDict != null) {
+                foreach (Animator anim in animatorDict.Values) {
                     if (anim.Enabled) {
                         return anim.nextSprite();
                     }
                 }
             }
-
             return spritePath;
         }
+
 
         public ref Vector2 Forward {
             get => ref forward;

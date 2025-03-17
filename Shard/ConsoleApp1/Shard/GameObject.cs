@@ -19,7 +19,6 @@ namespace Shard {
         private bool visible;
         private PhysicsBody myBody;
         private List<string> tags;
-        private Dictionary<string, Animator> animatorDict;
 
         public void addTag(string str) {
             if (tags.Contains(str)) {
@@ -53,32 +52,7 @@ namespace Shard {
          * This animator will then handle changes in spritepath
          */
         public void setAnimationEnabled() {
-            animatorDict = new Dictionary<string, Animator>();
-        }
-
-        public Dictionary<string, Animator> AnimatorDict {
-            get => animatorDict;
-        }
-        
-        /**
-         * Method that adds pre-existing animator to the dict
-         */
-        public void addAnimation(String name, Animator anim) {
-            if (animatorDict != null) {
-                animatorDict.Add(name, anim);
-                Bootstrap.getInput().addListener(anim);
-            }
-        }
-        
-        /**
-         * Method that creates the animator and adds it in one fell swoop
-         */
-        public void addAnimation(String name, List<string> spritePathList, string triggerType, int trigger, int frameDelay) {
-            if (animatorDict != null) {
-                Animator anim = new Animator(spritePathList, triggerType, trigger, frameDelay);
-                animatorDict.Add(name, anim);
-                Bootstrap.getInput().addListener(anim);
-            }
+            transform.AnimatorDict = new Dictionary<string, Animator>();
         }
 
         public void setAnimationEnabled(int frameDelay) {

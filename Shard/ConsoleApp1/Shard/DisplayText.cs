@@ -74,8 +74,8 @@ namespace Shard {
         int _access;
         private List<TextDetails> myTexts;
         private Dictionary<string, IntPtr> fontLibrary;
-        public const int WIDTH = 1280;
-        public const int HEIGHT = 864;
+        private const int width = 1280;
+        private const int height = 864;
 
         public override void clearDisplay() {
             foreach (TextDetails td in myTexts) {
@@ -131,7 +131,7 @@ namespace Shard {
         public override void initialize() {
             fontLibrary = new Dictionary<string, IntPtr>();
             
-            setSize(WIDTH, HEIGHT);
+            setSize(width, height);
             
             SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING);
             SDL_ttf.TTF_Init();
@@ -161,7 +161,7 @@ namespace Shard {
          */
         public override void scaleWindow(Scaling dir) {
             float currentWidth = getWidth();
-            float currentScale = currentWidth / WIDTH;
+            float currentScale = currentWidth / width;
 
             //Set the next scale according to the param
             float nextScale = currentScale;
@@ -173,8 +173,8 @@ namespace Shard {
             
             //Calc next width and height
             // +0.5 for rounding
-            int nextWidth = (int)(nextScale * WIDTH + 0.5);
-            int nextHeight = (int)(nextScale * HEIGHT + 0.5);
+            int nextWidth = (int)(nextScale * width + 0.5);
+            int nextHeight = (int)(nextScale * height + 0.5);
             
             //Set size in display class to store
             setSize(nextWidth, nextHeight);
